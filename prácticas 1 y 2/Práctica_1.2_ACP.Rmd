@@ -116,6 +116,7 @@ datos_pca$zlogden <- not_available(datos_pca$zlogden)
 datos_pca <- lapply(datos_pca, function(x) not_available(x))
 ```
 # Visualizamos nuevamente los datos
+```{r echo=TRUE, include=TRUE, warning=FALSE}
 head(datos_pca, n = 3)
 ```
 
