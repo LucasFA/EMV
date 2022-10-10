@@ -56,7 +56,7 @@ library(psych)
 # Se normalizan los datos
 datos_normalizados <- scale(datos_pca)
 # Se hace el test de esfericidad
-cortest.bartlett(cor(datos_normalizados))
+cortest.bartlett(cor(datos_normalizados), n = 105) # 105 = attributes(datos_normalizados)$dim[[1]]
 # Para estos datos se obtiene un test significativo de modo que se rechaza la
 # hip?tesis nula y por tanto los datos no est?n incorrelados
 
@@ -138,6 +138,7 @@ PCA$rotation
 # al objeto, obtenemos información relevante: desviaciones típicas de
 # cada componente principal, proporción de varianza explicada y acumulada.
 PCA$sdev
+plot(cumsum(PCA$sdev^2) / (sum(PCA$sdev^2)), type = "l") # check this
 summary(PCA)
 
 # A continuación hacemos un análisis gráfico de la varianza explicada
