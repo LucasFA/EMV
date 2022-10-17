@@ -28,8 +28,8 @@ bfi_s <- bfi[1:200, 1:25] # subconjunto de datos
 # variables con la funci?n "cor" del paquete base, que proporciona la matriz
 # de correlaciones R
 # Hay muchos valores perdidos asi que arreglamos la base de datos primero
-not_available <- function(data, na.rm = F) {
-  data[is.na(data)] <- mean(data, na.rm = T)
+not_available <- function(data, na.rm = T) {
+  data[is.na(data)] <- mean(data, na.rm = na.rm)
   data
 }
 bfi_s <- as.data.frame(apply(bfi_s, 2, not_available))
