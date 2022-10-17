@@ -20,6 +20,11 @@ output:
 
 <div style="text-align: justify">
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
 © Este material está protegido por la **Licencia Creative Commons CC BY-NC-ND** que permite *descargar las obras y compartirlas con otras personas, siempre que se reconozca su autoría, pero no se pueden cambiar de ninguna manera ni se pueden utilizar comercialmente*.
 
 
@@ -164,22 +169,15 @@ outlier <- function(x) {
 outlier <- function(data, na.rm = T) {
   H <- 1.5 * IQR(data)
   data[
-    data < quantile(data, 0.25, na.rm) - H |
-    data > quantile(data, 0.75, na.rm) + H
+      data < quantile(data, 0.25, na.rm) - H |
+      data > quantile(data, 0.75, na.rm) + H
     ] <- NA
   data[is.na(data)] <- mean(data, na.rm = T)
   data
 }
 
 # Llamamos a la función outlier para cada variable que ha presentado outliers
-datos_pca$znac_def <- outlier(datos_pca$znac_def)
-datos_pca$zmortinf <- outlier(datos_pca$zmortinf)
-datos_pca$zespvida <- outlier(datos_pca$zespvida)
-datos_pca$zpib_cap <- outlier(datos_pca$zpib_cap)
-datos_pca$zpoblac <- outlier(datos_pca$zpoblac)
-datos_pca$zdensida <- outlier(datos_pca$zdensida)
-datos_pca$zlog_pob <- outlier(datos_pca$zlog_pob)
-datos_pca$zlogden <- outlier(datos_pca$zlogden)
+datos_pca <- lapply(datos_pca, outlier)
 
 # Comparamos los datos originales y los arreglados con respectivos boxplots
 par(mfrow = c(1, 2))
