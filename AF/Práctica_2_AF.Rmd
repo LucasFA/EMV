@@ -1,18 +1,30 @@
+# Práctica 2: Análisis factorial
+
 En esta practica vamos a identificar las variables que corresponden a cada
 uno de los cinco aspectos de la personalidad de un individuo.
-Para ello cargamos el conjunto de datos bfi de la librer?a psyh.
+
+Para ello cargamos el conjunto de datos bfi de la librería psych.
 Este conjunto de datos contiene 2800 observaciones con 28 variables, con 25
 Items de una prueba de personalidad (MBI: Maslach Burnout Inventory.
-Las cinco caracter?sticas que definen la personalidad de un individuo son:
-A - Amabilidad; C - Conciencia; E - Extraversi?n; N - Neuroticismo y Ap - Apertura
-Instalamos las librer?as a utilizar si no est?n ya instaladas
+Las cinco características que definen la personalidad de un individuo son:
+
+* A - Amabilidad
+* C - Conciencia
+* E - Extraversión
+* N - Neuroticismo
+* Ap - Apertura
+
+Instalamos las librerías a utilizar si no están ya instaladas
+```{r, eval=FALSE}
 install.packages("psych")
 install.packages("polycor")
 install.packages("ggcorrplot")
 install.packages("corrr")
-Cargamos las librer?as que vamos a utilizar
+```
 
-```{r }
+Cargamos las librerías que vamos a utilizar
+
+```{r, echo = FALSE}
 library(psych)
 library(polycor)
 library(ggcorrplot)
@@ -27,8 +39,8 @@ nos quedamos con 200 observaciones de los 28 items
 bfi_s <- bfi[1:200, 1:25] # subconjunto de datos
 ```
 
-PASO 1: ¿tiene sentido un AF?
---------------------------------------
+## Paso 1: ¿tiene sentido un AF?
+
 Para responder a esta pregunta se comprueba si existe correlaci?n entre las
 variables con la funci?n "cor" del paquete base, que proporciona la matriz
 de correlaciones R
@@ -42,9 +54,9 @@ not_available <- function(data, na.rm = T) {
 bfi_s <- as.data.frame(apply(bfi_s, 2, not_available))
 ```
 
-Ahora calculamos la matriz de correlaciones para ver si est?n correlaciondas
-Vamos a utilizar distintas representaciones de esta informaci?n
-En primer lugar la matriz de correlaciones cl?sica
+Ahora calculamos la matriz de correlaciones para ver si están correlacionadas
+Vamos a utilizar distintas representaciones de esta información
+En primer lugar la matriz de correlaciones clásica
 
 ```{r }
 cor(bfi_s)
@@ -65,14 +77,14 @@ Otra representaci?n visual interesante es la siguiente (de la librer?a "corrplot
 corrplot(cor(bfi_s), order = "hclust", tl.col = "black", tl.cex = 1)
 ```
 
-O esta otra opci?n tambi?n es muy visual (de la librer?a "corrr")
+O esta otra opción también es muy visual (de la librería "corrr")
 
 ```{r }
 bfi_s_correlaciones <- correlate(bfi_s) #' C?lculo de un objeto de correlaciones
 rplot(bfi_s_correlaciones, legend = TRUE, colours = c("firebrick1", "black", "darkcyan"), print_cor = TRUE)
 ```
 
-El an?lisis de outliers se deja al gusto del lector, aunque en este ejemplo no
+El análisis de outliers se deja al gusto del lector, aunque en este ejemplo no
 los hay
 El contraste de esfericidad de Bartlett permite comprobar si las correlaciones
 son distintas de 0 de modo significativo. La hip?tesis nula es que det(R)=1
@@ -88,27 +100,27 @@ Se hace el test de esfericidad
 cortest.bartlett(cor(datos_normalizados))
 ```
 
------------ #'
-Paso 3: AF  #'
------------ #'
+
+## Paso 3: AF
+
 Hay que escoger un m?todo para extraer los factores, ACP, verosimilitud, etc.
-La funci?n fa() implementa hasta 6 m?todos distintos
+La función `fa()` implementa hasta 6 m?todos distintos
 Vamos a comparar las salidas con el m?todo del factor principal y con el de
 m?xima verosimilitud.
-#'#' prueba de dos modelos con tres factores
+prueba de dos modelos con tres factores
 
 ```{r }
 modelo1 <- fa(poly_cor,
   nfactors = 3,
   rotate = "none",
   fm = "mle"
-) #' modelo m?xima verosimilitud
+) # modelo m?xima verosimilitud
 
 modelo2 <- fa(poly_cor,
   nfactors = 3,
   rotate = "none",
   fm = "minres"
-) #' modelo m?nimo residuo
+) # modelo m?nimo residuo
 ```
 
 comparando las comunalidades
@@ -164,8 +176,8 @@ fa.diagram(modelo_varimax)
 
 En este diagrama, entre otras cosas se ve que el primer factor esta asociado
 con los items E1, E2, E3, E4, E5 y N4, que son los items del cuestioario que
-tratan de identificar la cualidad de la extraversi?n
-----------------------------------------------------
+tratan de identificar la cualidad de la extraversión
+
 Otra forma de hacerlo, con test de hip?tesis al final
 que contrasta si el numero de factores es suficiente
 
