@@ -11,6 +11,7 @@
 # install.packages("polycor")
 # install.packages("ggcorrplot")
 # install.packages("corrr")
+graphics.off()
 # Cargamos las librer?as que vamos a utilizar
 library(psych)
 library(polycor)
@@ -63,7 +64,7 @@ rplot(bfi_s_correlaciones, legend = TRUE, colours = c("firebrick1", "black", "da
 # Se normalizan los datos
 datos_normalizados <- scale(bfi_s)
 # Se hace el test de esfericidad
-cortest.bartlett(cor(datos_normalizados))
+cortest.bartlett(cor(datos_normalizados), n = length(bfi_s[[1]]))
 
 # ----------- #
 # Paso 3: AF  #
@@ -123,7 +124,7 @@ fa.diagram(modelo_varimax)
 
 
 # ----------------------------------------------------
-# Otra forma de hacerlo, con test de hip?tesis al final
+# Otra forma de hacerlo, cXon test de hip?tesis al final
 # que contrasta si el numero de factores es suficiente
 library(stats)
-factanal(bfi_s, factors = 9, rotation = "none")
+factanal(bfi_s, factors = 5, rotation = "none")
