@@ -4,7 +4,7 @@
 # En este estudio se analiza la viabilidad de un ACP y en caso afirmativo se   #
 # interpretan sus resultados.                                                  #
 ################################################################################
-
+graphics.off()
 # -------------------------------------- #
 # PASO 0: carga de unos datos de interés #
 # -------------------------------------- #
@@ -85,8 +85,8 @@ boxplot(datos_pca,
 # Ejemplo de construcción de una función en R
 outlier <- function(data, na.rm = T) {
         H <- 1.5 * IQR(data)
-        data[data < quantile(data, 0.25, na.rm = T) - H] <- NA
-        data[data > quantile(data, 0.75, na.rm = T) + H] <- NA
+        data[data < quantile(data, 0.25, na.rm = na.rm) - H] <- NA
+        data[data > quantile(data, 0.75, na.rm = na.rm) + H] <- NA
         data[is.na(data)] <- mean(data, na.rm = T)
         data
 }
