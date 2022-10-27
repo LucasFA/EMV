@@ -86,14 +86,14 @@ modelo2 <- fa(poly_cor,
   fm = "minres"
 ) # modelo m?nimo residuo
 # comparando las comunalidades
-sort(modelo1$communality, decreasing = T) -> c1
-sort(modelo2$communality, decreasing = T) -> c2
+c1 <- sort(modelo1$communality, decreasing = T)
+c2 <- sort(modelo2$communality, decreasing = T)
 head(cbind(c1, c2))
 
 # comparacion de las unicidades, es decir la proporción de varianza
 # que no ha sido explicada por el factor (1-comunalidad)
-sort(modelo1$uniquenesses, decreasing = T) -> u1
-sort(modelo2$uniquenesses, decreasing = T) -> u2
+u1 <- sort(modelo1$uniquenesses, decreasing = T)
+u2 <- sort(modelo2$uniquenesses, decreasing = T)
 head(cbind(u1, u2))
 
 # Determinemos ahora el n?mero ?ptimo de factores
