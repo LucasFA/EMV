@@ -1,4 +1,14 @@
-# Práctica 2: Análisis factorial
+<!-- 
+  Nota: Este archivo está en formato UTF-8.
+ -->
+---
+title: "Práctica 2. Análisis Factorial (AF)"
+author: "José Luis Romero Béjar, Lucas Fehlau Arbulu"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc:true
+---
 
 En esta practica vamos a identificar las variables que corresponden a cada
 uno de los cinco aspectos de la personalidad de un individuo.
@@ -24,7 +34,7 @@ install.packages("corrr")
 
 Cargamos las librerías que vamos a utilizar
 
-```{r, echo = FALSE}
+```{r, error = FALSE, warning = FALSE, message=FALSE}
 library(psych)
 library(polycor)
 library(ggcorrplot)
@@ -33,7 +43,7 @@ library(corrr)
 ```
 
 Cargamos los datos mencionados anteriormente, en este caso
-nos quedamos con 200 observaciones de los 28 items
+nos quedamos con 200 observaciones de los 25 items, resultantes de eliminar el género, la edad y la educación.
 
 ```{r }
 bfi_s <- bfi[1:200, 1:25] # subconjunto de datos
@@ -41,8 +51,8 @@ bfi_s <- bfi[1:200, 1:25] # subconjunto de datos
 
 ## Paso 1: ¿tiene sentido un AF?
 
-Para responder a esta pregunta se comprueba si existe correlaci?n entre las
-variables con la funci?n "cor" del paquete base, que proporciona la matriz
+Para responder a esta pregunta se comprueba si existe correlación entre las
+variables con la función "cor" del paquete base, que proporciona la matriz
 de correlaciones R
 Hay muchos valores perdidos asi que arreglamos la base de datos primero
 
@@ -62,16 +72,16 @@ En primer lugar la matriz de correlaciones clásica
 cor(bfi_s)
 ```
 
-En segundo lugar podemos tener una representaci?n visual de las correlaciones
-Calculamos la matriz de correlaciones polic?rica
-Las funciones hetcor y ggcorrplot est?nn en los paquetes polycor y ggcoorplot
+En segundo lugar podemos tener una representación visual de las correlaciones
+Calculamos la matriz de correlaciones policórica
+Las funciones hetcor y ggcorrplot estánn en los paquetes polycor y ggcoorplot
 
 ```{r }
 poly_cor <- hetcor(bfi_s)$correlations
 ggcorrplot(poly_cor, type = "lower", hc.order = T)
 ```
 
-Otra representaci?n visual interesante es la siguiente (de la librer?a "corrplot")
+Otra representación visual interesante es la siguiente (de la librería "corrplot")
 
 ```{r }
 corrplot(cor(bfi_s), order = "hclust", tl.col = "black", tl.cex = 1)
@@ -80,14 +90,14 @@ corrplot(cor(bfi_s), order = "hclust", tl.col = "black", tl.cex = 1)
 O esta otra opción también es muy visual (de la librería "corrr")
 
 ```{r }
-bfi_s_correlaciones <- correlate(bfi_s) #' C?lculo de un objeto de correlaciones
+bfi_s_correlaciones <- correlate(bfi_s) #' Cálculo de un objeto de correlaciones
 rplot(bfi_s_correlaciones, legend = TRUE, colours = c("firebrick1", "black", "darkcyan"), print_cor = TRUE)
 ```
 
 El análisis de outliers se deja al gusto del lector, aunque en este ejemplo no
 los hay
 El contraste de esfericidad de Bartlett permite comprobar si las correlaciones
-son distintas de 0 de modo significativo. La hip?tesis nula es que det(R)=1
+son distintas de 0 de modo significativo. La hipótesis nula es que det(R)=1
 Se normalizan los datos
 
 ```{r }
@@ -97,16 +107,17 @@ datos_normalizados <- scale(bfi_s)
 Se hace el test de esfericidad
 
 ```{r }
-cortest.bartlett(cor(datos_normalizados))
+cortest.bartlett(cor(datos_normalizados), n = nrow(datos_normalizados))
 ```
+El test es significativo para el caso $n=100$, que es el valor por defecto, pero por si acaso especificamos el tamaño de la muestra.
 
 
 ## Paso 3: AF
 
-Hay que escoger un m?todo para extraer los factores, ACP, verosimilitud, etc.
-La función `fa()` implementa hasta 6 m?todos distintos
-Vamos a comparar las salidas con el m?todo del factor principal y con el de
-m?xima verosimilitud.
+Hay que escoger un método para extraer los factores, ACP, verosimilitud, etc.
+La función `fa()` implementa hasta 6 métodos distintos
+Vamos a comparar las salidas con el método del factor principal y con el de
+máxima verosimilitud.
 prueba de dos modelos con tres factores
 
 ```{r }
@@ -114,20 +125,20 @@ modelo1 <- fa(poly_cor,
   nfactors = 3,
   rotate = "none",
   fm = "mle"
-) # modelo m?xima verosimilitud
+) # modelo máxima verosimilitud
 
 modelo2 <- fa(poly_cor,
   nfactors = 3,
   rotate = "none",
   fm = "minres"
-) # modelo m?nimo residuo
+) # modelo mínimo residuo
 ```
 
 comparando las comunalidades
 
 ```{r }
-sort(modelo1$communality, decreasing = T) -> c1
-sort(modelo2$communality, decreasing = T) -> c2
+c1 <- sort(modelo1$communality, decreasing = T)
+c2 <- sort(modelo2$communality, decreasing = T)
 head(cbind(c1, c2))
 ```
 
@@ -135,23 +146,27 @@ comparacion de las unicidades, es decir la proporción de varianza
 que no ha sido explicada por el factor (1-comunalidad)
 
 ```{r }
-sort(modelo1$uniquenesses, decreasing = T) -> u1
-sort(modelo2$uniquenesses, decreasing = T) -> u2
+u1 <- sort(modelo1$uniquenesses, decreasing = T)
+u2 <- sort(modelo2$uniquenesses, decreasing = T)
 head(cbind(u1, u2))
 ```
 
-Determinemos ahora el n?mero ?ptimo de factores
+Determinemos ahora el número óptimo de factores
 Hay diferentes criterios, entre los que destacan el Scree plot (Cattel 1966)
-y el an?lisis paralelo (Horn 1965). Ejercicio: buscar sus interpretaciones
+y el análisis paralelo (Horn 1965). 
+
+### Ejercicio: buscar sus interpretaciones
+* Scree plot: gráfica representando los valores propios de una matriz de correlaciones. Con ella se puede utilizar el método del codo, quedándonos con los valores propios que sean significativamente mayores al resto, por un cambio brusco en su magnitud: una bajada significativa.
+* Análisis paralelo: compara los valores propios de nuestra matriz con los de matrices de la misma dimensión generadas aleatoriamente (Monte Carlo), de las cuales se calcula el scree plot a partir de las medias de los valores propios, tras ordenarlos: "FA simulated data". Véase el artículo original [en este enlace](https://link.springer.com/article/10.1007/BF02289447)
 
 ```{r }
 scree(poly_cor)
 fa.parallel(poly_cor, n.obs = 200, fa = "fa", fm = "minres")
 ```
 
-Se deduce que el n?mero ?ptimo de Factores es 5
-Estimamos el modelo factorial con 5 factores implementando una rotaci?n
-tipo varimax para buscar una interpretaci?n m?s simple.
+Se deduce que el número óptimo de Factores es 5
+Estimamos el modelo factorial con 5 factores implementando una rotación
+tipo varimax para buscar una interpretación más simple.
 
 ```{r }
 modelo_varimax <- fa(poly_cor,
@@ -166,9 +181,9 @@ Mostramos la matriz de pesos factorial rotada
 print(modelo_varimax$loadings, cut = 0)
 ```
 
-Visualmente podr?amos hacer el esfuerzo de ver con qu? variables correlacionan cada
+Visualmente podríamos hacer el esfuerzo de ver con qué variables correlacionan cada
 uno de los factores, pero es muy tedioso de modo que utilizamos la siguiente
-representaci?n
+representación
 
 ```{r }
 fa.diagram(modelo_varimax)
@@ -178,7 +193,7 @@ En este diagrama, entre otras cosas se ve que el primer factor esta asociado
 con los items E1, E2, E3, E4, E5 y N4, que son los items del cuestioario que
 tratan de identificar la cualidad de la extraversión
 
-Otra forma de hacerlo, con test de hip?tesis al final
+Otra forma de hacerlo, con test de hipótesis al final
 que contrasta si el numero de factores es suficiente
 
 ```{r }
