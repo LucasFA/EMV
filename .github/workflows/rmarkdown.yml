@@ -10,7 +10,7 @@ jobs:
       - name: Set up Git repository
         uses: actions/checkout@v3
       - name: Render document
-        uses: lc5415/rmarkdown-action@v1
+        uses: happyRip/rmarkdown-action@v1.1
         with:
           input_file: "./Práctica final/práctica.rmd"
           output_format: pdf_document
