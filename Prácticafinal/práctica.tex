@@ -33,6 +33,46 @@
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
 \usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -71,6 +111,32 @@
 \section{Hola mundo}\label{hola-mundo}}
 
 Este es un test para el rmd
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rnorm}\NormalTok{(}\DecValTok{100}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   [1] -1.73123060 -0.67656774  0.64431375  0.65009923 -0.81830811 -2.63006255
+##   [7] -0.79891072 -0.86427971 -0.01636138  0.85775310  0.43793234 -1.38131699
+##  [13]  1.11199027  0.08715756 -1.13920520 -0.03417154  0.24479867 -0.29079229
+##  [19] -1.25243072 -1.26262740  2.37520545  0.37276274  0.11124040 -0.48449472
+##  [25] -0.18948525  0.38126383 -0.07858160  0.83937979 -0.07938892 -0.66324835
+##  [31] -0.77902926 -1.19486331  0.82789233  0.61267869 -0.63467041 -1.07772503
+##  [37]  0.14113613  1.19698341 -0.53087333 -0.21468773 -1.43929976 -1.02924946
+##  [43] -0.15523252  0.86042120  1.28549092 -0.29934830 -0.13902361 -0.67522752
+##  [49] -0.45794609 -0.81365819  1.79110093  1.34909224 -0.45671428 -1.01114992
+##  [55]  0.12315434 -0.35326353 -0.35603593  0.48985881 -1.16697677 -1.25513788
+##  [61] -0.25256689  0.13424851 -1.10573882 -0.40254157 -1.95934862 -0.02930108
+##  [67] -0.31001647  0.47985227  1.08020380 -2.56447123 -2.14345810 -0.02853284
+##  [73]  2.19788667  0.56990051  0.05426210 -0.27033153 -1.21628128 -0.80205779
+##  [79] -0.19531871  0.72688192  1.86518477  1.80494547 -0.06083432  0.27392583
+##  [85]  1.92539764  0.51970386 -1.31960322  0.87703757  0.31039742  1.07514182
+##  [91] -0.01657446 -0.15991386  1.44029093  0.01670341 -1.01466081  0.14877505
+##  [97]  0.59512916 -0.82084186 -0.93394685 -0.90937218
+\end{verbatim}
 
 Texto después del bloque
 
