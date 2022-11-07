@@ -5,3 +5,5 @@ Este es un test para el rmd
 ```{r setup, include=FALSE}
 rnorm(100)
 ```
+
+Texto después del bloque
