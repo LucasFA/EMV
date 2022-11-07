@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - "Prácticafinal**"
+      - "rmarkdown.yml"
 jobs:
   render_documents:
     runs-on: ubuntu-latest
