@@ -13,7 +13,7 @@ jobs:
         uses: happyRip/rmarkdown-action@v1.1
         with:
           input_file: "./Prácticafinal/práctica.rmd"
-          output_format: pdf_document
+          output_format: [pdf_document, html_document]
       - name: Commit files
         run: |
           git config --local core.autocrlf false
