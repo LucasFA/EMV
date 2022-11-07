@@ -2,7 +2,7 @@
 
 Este es un test para el rmd
 
-```{r setup, include=FALSE}
+```{r}
 rnorm(100)
 ```
 
