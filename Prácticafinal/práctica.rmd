@@ -3,7 +3,11 @@
 Este es un test para el rmd
 
 ```{r}
-rnorm(100)
+1000 |>
+    replicate(rnorm(10)) |>
+    as.data.frame() |>
+    sapply(mean) |>
+    summary()
 ```
 
 Texto después del bloque
