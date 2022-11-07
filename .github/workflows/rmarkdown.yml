@@ -12,5 +12,5 @@ jobs:
       - name: Render document
         uses: happyRip/rmarkdown-action@v1.1
         with:
-          input_file: "./Práctica final/práctica.rmd"
+          input_file: "./Prácticafinal/práctica.rmd"
           output_format: pdf_document
