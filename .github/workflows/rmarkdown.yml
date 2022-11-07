@@ -3,17 +3,28 @@ on:
   push:
     branches: 
       - main
+    paths:
+      - "./Prácticafinal/*.rmd"
 jobs:
-  render_document:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v3
+  render_documents:
+    needs: setup
+    strategy: 
+      matrix:
+        document_type: [pdf_document, html_document]
+    runs-on: ubuntu-latest
       - name: Render document
         uses: happyRip/rmarkdown-action@v1.1
         with:
           input_file: "./Prácticafinal/práctica.rmd"
-          output_format: [pdf_document, html_document]
+          output_format: ${{ matrix.document_type }}
+  commit_files:
+    needs: [render_document_pdf, render_document_html]
+    runs-on: ubuntu-latest
       - name: Commit files
         run: |
           git config --local core.autocrlf false
