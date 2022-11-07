@@ -20,7 +20,7 @@ jobs:
           input_file: "./Prácticafinal/práctica.rmd"
           output_format: ${{ matrix.document_type }}
   commit_files:
-    needs: [render_document_pdf, render_document_html]
+    needs: render_documents
     runs-on: ubuntu-latest
       - name: Commit files
         run: |
