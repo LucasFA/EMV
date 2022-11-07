@@ -1,8 +1,8 @@
 name: Render documents with rmarkdown-action
 on: 
   push:
-  branches: 
-    - práctica-final
+    branches: 
+      - práctica-final
 jobs:
   render_document:
     runs-on: ubuntu-latest
@@ -13,4 +13,4 @@ jobs:
         uses: lc5415/rmarkdown-action@v1
         with:
           input_file: "./Práctica final/práctica.rmd"
-	  output_format: pdf_document
+          output_format: pdf_document
