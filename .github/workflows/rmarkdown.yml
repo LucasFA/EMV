@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy: 
       matrix:
-        document_type: [pdf_document, html_document]
+        document_type: [pdf_document]
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v3
