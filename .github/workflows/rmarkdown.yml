@@ -22,6 +22,7 @@ jobs:
   commit_files:
     needs: render_documents
     runs-on: ubuntu-latest
+    steps:
       - name: Commit files
         run: |
           git config --local core.autocrlf false
