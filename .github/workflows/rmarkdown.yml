@@ -2,7 +2,7 @@ name: Render documents with rmarkdown-action
 on: 
   push:
     branches: 
-      - práctica-final
+      - main
 jobs:
   render_document:
     runs-on: ubuntu-latest
