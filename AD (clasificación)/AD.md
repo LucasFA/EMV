@@ -17,4 +17,4 @@ Asigna observaciones a la modalidad con mayor probabilidad
 
 * Varianzas y covarianzas homogéneas (homocedasticidad)
 * Distribuciones normales
-* Muestra aleatoria simple ()
+* Muestra aleatoria simple
