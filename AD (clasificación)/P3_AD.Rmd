@@ -193,8 +193,16 @@ modelo_lda
 ```
 
 La salida de este objeto, nos muestra las **probabilidades a priori** de cada grupo, en este caso 0.5 para cada especie (10/20), las **medias de cada regresor por grupo** y los **coeficientes del modelo de clasificación discrimiante lineal**, que en este caso tendría la forma: 
+$$
+  logodds = 0.13225339\text{pata} - 0.07941509\text{abdomen} - 0.52655608\text{organo_sexual}
+$$
+<!-- *odds = 0.13225339pata - 0.07941509abdomen - 0.52655608organo_sexual* -->
+donde 
+$$
+  logodds = \operatorname{log} \frac{P[Y = a | X = x]}{P[Y = b | X = x]}
+$$
 
-*odds = 0.13225339pata - 0.07941509abdomen - 0.52655608organo_sexual*
+x = 3-tupla (pata, abdomen, organo_sexual)
 
 Una vez construido el clasificador podemos clasificar nuevos datos en función de sus medidas sin más que llamar a la función **predict**. Por ejemplo, un nuevo espécimen cuyas medidas sean: pata = 194, abdomen = 124, organo_sexual = 49.
 
@@ -362,7 +370,7 @@ La **hipóstesis nula** a contrastar es la de **igualdad de matrices de covarian
 
 ```{r}
 # El paquete solo se instala una vez para evitar errores de ejecución puesto que está en nuestro repositorio local.
-# install.packages("biotools")
+install.packages("biotools")
 library(biotools)
 boxM(data = datos[, -3], grouping = datos[, 3])
 ```
