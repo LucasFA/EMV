@@ -1,9 +1,84 @@
-# Hola mundo
+---
+title: "Práctica final"
+author: "Agnese, Lucas Fehlau Arbulu"
+date: "`r Sys.Date()`"
+output:
+  html_document: 
+    toc: true
+    toc_depth: 3
+    number_sections: false
+    toc_float: 
+      collapsed: false
+      smooth_scroll: false
+  pdf_document: default
+    keep_tex: true
+---
 
-Este es un test para el rmd
-
+<!-- Load data from csv file -->
 ```{r}
-# -
+data <- read.csv("./diabetes.csv", stringsAsFactors = TRUE)
+str(data)
 ```
 
-Texto después del bloque
+# Análisis exploratorio univariante
+
+<!-- TBD -->
+
+## Análisis exploratorio multivariante
+
+Eliminamos la variable respuesta categórica
+```{r}
+data_pca <- subset(data, select = -class)
+```
+Y comprobamos si tiene sentido aplicar PCA
+```{r}
+cor(data_pca)
+library(psych)
+data_normalised <- scale(data_pca)
+cortest.bartlett(cor(data_normalised))
+
+# Outliers (univariate)
+boxplot(data_normalised,
+    col = c(1:8)
+)
+```
+
+Actual PCA
+```{r}
+PCA <- prcomp(data_pca, scale = TRUE, center = TRUE)
+
+PCA$rotation
+
+plot(cumsum(PCA$sdev^2) / (sum(PCA$sdev^2)), type = "l") # check this
+summary(PCA)
+```
+### Choosing the number of components
+#### Elbow method
+```{r}
+fviz_screeplot(PCA, addlabels = TRUE)
+```
+Suggests 3 components
+### Mean variace method
+```{r}
+PCA$sdev
+mean(PCA$sdev^2)
+```
+Also suggests 3 components.
+
+### Visualizacion de PCA
+```{r}
+fviz_pca_var(PCA,
+        repel = TRUE, col.var = "cos2",
+        legend.title = "Distancia"
+) + theme_bw()
+```
+
+```{r}
+fviz_pca_var(PCA,
+        axes = c(1, 3),
+        repel = TRUE, col.var = "cos2",
+        legend.title = "Distancia"
+) + theme_bw()
+```
+
+<!-- TODO?: interpretation -->
