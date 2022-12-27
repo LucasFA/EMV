@@ -13,7 +13,68 @@ output:
   pdf_document: default
     keep_tex: true
 ---
+# Read the data
+```{r ReadData}
+diabetes_full <- read.csv("diabetes.csv", stringsAsFactors = TRUE)
+head(diabetes_full)
+```
 
+# Univariate explorative analysis
+The variables we are dealing with are described as below: 
+
++ Number of times pregnant
++ Plasma glucose concentration a 2 hours in an oral glucose tolerance test
++ Diastolic blood pressure (mm Hg)
++ Triceps skin fold thickness (mm)
++ 2-Hour serum insulin (mu U/ml)
++ Body mass index (weight in kg/(height in m)^2)
++ Diabetes pedigree function
++ Age (years)
++ Class variable (0 or 1 for tested_positive or tested_negative)
+We are not interesed in the number of pregnancy, so we will omit this variable. The response variable will be `class`, which tells us if a patient shows signs of diabetes according to World Health Organization criteria (i.e., if the 2 hour post-load plasma glucose was at least $200$ mg/dl at any survey examination or if found during routine medical care). A sample of $768$ females of Pima Indian heritage, a population that lives near Phoenix, Arizona, USA, have been considered, where the girls are at least 21 years old.\
+
+```{r}
+# Remove the first column from the dataset
+diabetes <- diabetes_full[, -1]
+head(diabetes)
+```
+In this dataset, all the missing values have been substituted by the number $0$. Since, for example, it doesn't make any sense to consider a $0$ mm thickness of the triceps skin fold of a girl or a zero diastolic blood pressure, we detect this "kind of" missing values and we substitute them with the mean of the considered variable. 
+```{r}
+# Replace zeros of all columns with NA, so that we can use the functions to
+# detect missing values showed in class
+diabetes[diabetes == 0] <- NA
+head(diabetes)
+
+
+### ----- i) -----
+# Percentage of missing values in each column
+percNA <- (colMeans(is.na(diabetes))) * 100
+percNA
+
+# Columns skin and insu have more then 5%
+
+
+# Function to detect missing values and replace them with the mean of that
+# variable
+not_available <- function(data, na.rm = F) {
+  data[is.na(data)] <- mean(data, na.rm = T)
+  data
+}
+
+# Replace NA with the mean of that variable
+df <- data.frame(lapply(diabetes[1:7], not_available))
+head(df)
+
+# Data without NA. The NA are replaced by the mean of each column.
+new_diab <- cbind(df, diabetes[8])
+head(new_diab)
+
+
+### ------- ii) ----------
+# Student t-test for homogenity
+t.test(new_diab$age, new_diab$skin)
+t.test(new_diab$pres, new_diab$mass)
+```
 <!-- Load data from csv file -->
 ```{r}
 data <- read.csv("./diabetes.csv", stringsAsFactors = TRUE)
