@@ -57,6 +57,12 @@ plot(cumsum(PCA$sdev^2) / (sum(PCA$sdev^2)), type = "l") # check this
 summary(PCA)
 ```
 ### Choosing the number of components
+We need the function `fviz_screeplot` from the `factoextra` package.
+
+```{r}
+library(factoextra)
+```
+
 #### Elbow method
 ```{r}
 fviz_screeplot(PCA, addlabels = TRUE)
@@ -135,3 +141,7 @@ u1 <- sort(modelo1$uniquenesses, decreasing = T)
 u2 <- sort(modelo2$uniquenesses, decreasing = T)
 head(cbind(u1, u2))
 ```
+
+<!-- f -->
+
+## Classifier
