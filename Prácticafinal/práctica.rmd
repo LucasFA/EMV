@@ -28,24 +28,28 @@ str(data)
 
 Eliminamos la variable respuesta categórica
 ```{r}
-data_pca <- subset(data, select = -class)
+data_no_output <- subset(data, select = -class)
 ```
-Y comprobamos si tiene sentido aplicar PCA
+<!-- a) -->
+Y comprobamos si tiene sentido aplicar PCA con el test de Bartlett
 ```{r}
-cor(data_pca)
+cor(data_no_output)
 library(psych)
-data_normalised <- scale(data_pca)
+data_normalised <- scale(data_no_output)
 cortest.bartlett(cor(data_normalised))
-
-# Outliers (univariate)
-boxplot(data_normalised,
-    col = c(1:8)
-)
 ```
+<!-- b hecho? TODO -->
+<!-- c hecho? TODO -->
 
+<!-- Before d and e -->
+
+<!-- ### Preparation for PCA and FA
+
+We check that the data is  -->
+<!-- d) -->
 Actual PCA
 ```{r}
-PCA <- prcomp(data_pca, scale = TRUE, center = TRUE)
+PCA <- prcomp(data_no_output, scale = TRUE, center = TRUE)
 
 PCA$rotation
 
@@ -65,7 +69,8 @@ mean(PCA$sdev^2)
 ```
 Also suggests 3 components.
 
-### Visualizacion de PCA
+<!-- TODO: where does this go? It doesn't seem to appear in the guide -->
+### Visualization of principal components
 ```{r}
 fviz_pca_var(PCA,
         repel = TRUE, col.var = "cos2",
@@ -82,3 +87,51 @@ fviz_pca_var(PCA,
 ```
 
 <!-- TODO?: interpretation -->
+
+<!-- e) -->
+## Factor analysis
+### Preconditions
+We saw in our previous analysis of correlations for PCA that the data 
+
+```{r}
+poly_cor <- polycor::hetcor(data_no_output)$correlations
+ggcorrplot::ggcorrplot(poly_cor, type = "lower", hc.order = T)
+```
+
+```{r}
+corrplot::corrplot(cor(data_no_output), order = "hclust", tl.col = "black", tl.cex = 1)
+```
+
+### Actual FA
+
+MLE model:
+```{r}
+modelo1 <- fa(poly_cor,
+  nfactors = 3,
+  rotate = "none",
+  fm = "mle"
+)
+```
+Minimum residual model:
+```{r}
+modelo2 <- fa(poly_cor,
+  nfactors = 3,
+  rotate = "none",
+  fm = "minres"
+)
+```
+Compare the communalities
+```{r }
+c1 <- sort(modelo1$communality, decreasing = T)
+c2 <- sort(modelo2$communality, decreasing = T)
+head(cbind(c1, c2))
+```
+
+<!-- TODO: check the name of this -->
+Compare the unicities 
+
+```{r }
+u1 <- sort(modelo1$uniquenesses, decreasing = T)
+u2 <- sort(modelo2$uniquenesses, decreasing = T)
+head(cbind(u1, u2))
+```
