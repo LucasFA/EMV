@@ -10,7 +10,7 @@ output:
     toc_float: 
       collapsed: false
       smooth_scroll: false
-  pdf_document: default
+  pdf_document:
     keep_tex: true
 ---
 # Read the data
@@ -31,12 +31,14 @@ The variables we are dealing with are described as below:
 + Diabetes pedigree function
 + Age (years)
 + Class variable (0 or 1 for tested_positive or tested_negative)
-We are not interesed in the number of pregnancy, so we will omit this variable. The response variable will be `class`, which tells us if a patient shows signs of diabetes according to World Health Organization criteria (i.e., if the 2 hour post-load plasma glucose was at least $200$ mg/dl at any survey examination or if found during routine medical care). A sample of $768$ females of Pima Indian heritage, a population that lives near Phoenix, Arizona, USA, have been considered, where the girls are at least 21 years old.\
+
+We are not interesed in the number of pregnancy, so we will omit this variable. The response variable will be `class`, which tells us if a patient shows signs of diabetes according to World Health Organization criteria (i.e., if the 2 hour post-load plasma glucose was at least $200$ mg/dl at any survey examination or if found during routine medical care). A sample of $768$ females of Pima Indian heritage, a population that lives near Phoenix, Arizona, USA, have been considered, where the girls are at least 21 years old.
 
 ```{r}
 # Remove the first column from the dataset
 diabetes <- diabetes_full[, -1]
 head(diabetes)
+summary(diabetes)
 ```
 In this dataset, all the missing values have been substituted by the number $0$. Since, for example, it doesn't make any sense to consider a $0$ mm thickness of the triceps skin fold of a girl or a zero diastolic blood pressure, we detect this "kind of" missing values and we substitute them with the mean of the considered variable. 
 ```{r}
@@ -56,8 +58,8 @@ percNA
 
 # Function to detect missing values and replace them with the mean of that
 # variable
-not_available <- function(data, na.rm = F) {
-  data[is.na(data)] <- mean(data, na.rm = T)
+not_available <- function(data) {
+  data[is.na(data)] <- mean(data, na.rm = TRUE)
   data
 }
 
@@ -75,28 +77,20 @@ head(new_diab)
 t.test(new_diab$age, new_diab$skin)
 t.test(new_diab$pres, new_diab$mass)
 ```
-<!-- Load data from csv file -->
-```{r}
-data <- read.csv("./diabetes.csv", stringsAsFactors = TRUE)
-str(data)
-```
-
-# Análisis exploratorio univariante
-
-<!-- TBD -->
+<!-- TODO: what is the homogeneity test for? -->
 
 ## Análisis exploratorio multivariante
 
 Eliminamos la variable respuesta categórica
 ```{r}
-data_no_output <- subset(data, select = -class)
+diab_no_output <- subset(new_diab, select = -class)
 ```
 <!-- a) -->
 Y comprobamos si tiene sentido aplicar PCA con el test de Bartlett
 ```{r}
-cor(data_no_output)
+cor(diab_no_output)
 library(psych)
-data_normalised <- scale(data_no_output)
+data_normalised <- scale(diab_no_output)
 cortest.bartlett(cor(data_normalised))
 ```
 <!-- b hecho? TODO -->
@@ -110,7 +104,7 @@ We check that the data is  -->
 <!-- d) -->
 Actual PCA
 ```{r}
-PCA <- prcomp(data_no_output, scale = TRUE, center = TRUE)
+PCA <- prcomp(diab_no_output, scale = TRUE, center = TRUE)
 
 PCA$rotation
 
@@ -161,12 +155,12 @@ fviz_pca_var(PCA,
 We saw in our previous analysis of correlations for PCA that the data 
 
 ```{r}
-poly_cor <- polycor::hetcor(data_no_output)$correlations
+poly_cor <- polycor::hetcor(diab_no_output)$correlations
 ggcorrplot::ggcorrplot(poly_cor, type = "lower", hc.order = T)
 ```
 
 ```{r}
-corrplot::corrplot(cor(data_no_output), order = "hclust", tl.col = "black", tl.cex = 1)
+corrplot::corrplot(cor(diab_no_output), order = "hclust", tl.col = "black", tl.cex = 1)
 ```
 
 ### Actual FA
