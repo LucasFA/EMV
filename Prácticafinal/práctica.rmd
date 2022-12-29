@@ -94,13 +94,9 @@ data_normalised <- scale(diab_no_output)
 cortest.bartlett(cor(data_normalised))
 ```
 <!-- b hecho? TODO -->
-<!-- c hecho? TODO -->
+<!-- c Done in the previous  -->
 
-<!-- Before d and e -->
 
-<!-- ### Preparation for PCA and FA
-
-We check that the data is  -->
 <!-- d) -->
 Actual PCA
 ```{r}
@@ -123,7 +119,7 @@ library(factoextra)
 fviz_screeplot(PCA, addlabels = TRUE)
 ```
 Suggests 3 components
-### Mean variace method
+#### Mean variace method
 ```{r}
 PCA$sdev
 mean(PCA$sdev^2)
@@ -197,6 +193,88 @@ u2 <- sort(modelo2$uniquenesses, decreasing = T)
 head(cbind(u1, u2))
 ```
 
-<!-- f -->
+```{r }
+scree(poly_cor)
+fa.parallel(poly_cor, n.obs = length(diab_no_output[,1]), fa = "fa", fm = "minres")
+```
 
+```{r }
+modelo_varimax <- fa(poly_cor,
+  nfactors = 3, rotate = "varimax",
+  fa = "mle"
+)
+
+print(modelo_varimax$loadings, cut = 0)
+fa.diagram(modelo_varimax)
+stats::factanal(diab_no_output, factors = 3, rotation = "none")
+```
+
+
+<!-- f -->
+## Multivariante multivariate
+
+<!-- TODO: adapt to our use case -->
+
+### Distribuciones marginales
+```{r}
+# Representación mediante Histograma de cada variable para cada especie
+par(mfcol = c(2, 3))
+for (k in 2:4) {
+  j0 <- names(datos)[k]
+  # br0 <- seq(min(datos[, k]), max(datos[, k]), le = 11)
+  x0 <- seq(min(datos[, k]), max(datos[, k]), le = 50)
+  for (i in 1:2) {
+    i0 <- levels(datos$especie)[i]
+    x <- datos[datos$especie == i0, j0]
+    hist(x, proba = T, col = grey(0.8), main = paste("especie", i0), xlab = j0)
+    lines(x0, dnorm(x0, mean(x), sd(x)), col = "red", lwd = 2)
+  }
+}
+```
+
+### Gráficos QQ-plot
+```{r}
+# Representación de cuantiles normales de cada variable para cada especie
+par(mfrow = c(2, 3))
+for (k in 2:4) {
+  j0 <- names(datos)[k]
+  x0 <- seq(min(datos[, k]), max(datos[, k]), le = 50)
+  for (i in 1:2) {
+    i0 <- levels(datos$especie)[i]
+    x <- datos[datos$especie == i0, j0]
+    qqnorm(x, main = paste("especie", i0, j0), pch = 19, col = i + 1)
+    qqline(x)
+  }
+}
+par(mfrow = c(1, 1))
+```
+
+### Normality tests
+#### Univariate
+
+We will use the Shapiro-Wilk test for normality.
+
+```{r}
+datos_tidy <- reshape2::melt(diab_no_output, value.name = "value")
+stats::aggregate(
+  formula = value ~ class + variable,
+  data = datos_tidy,
+  FUN = function(x) {
+    shapiro.test(x)$p.value
+  }
+)
+```
+
+#### Multivariate
+<!-- TODO -->
+
+<!-- g -->
 ## Classifier
+
+```{r}
+pairs(
+  x = diab_no_output[sample(nrow(diab_no_output), 100), ],
+  col = c("green", "red")[new_diab$class],
+  pch = 19
+)
+```
