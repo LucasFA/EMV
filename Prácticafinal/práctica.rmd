@@ -255,15 +255,16 @@ par(mfrow = c(1, 1))
 We will use the Shapiro-Wilk test for normality.
 
 ```{r}
-datos_tidy <- reshape2::melt(diab_no_output, value.name = "value")
+datos_tidy <- reshape2::melt(new_diab, value.name = "value")
 stats::aggregate(
-  formula = value ~ class + variable,
+  value ~ class + variable,
   data = datos_tidy,
   FUN = function(x) {
     shapiro.test(x)$p.value
   }
 )
 ```
+Unfortunately, none of the variables are normally distributed.
 
 #### Multivariate
 <!-- TODO -->
