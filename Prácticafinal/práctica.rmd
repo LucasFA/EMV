@@ -85,7 +85,7 @@ The p-value obtained in each test is smaller than the significance level $\alpha
 ```{r Outiliers, echo=TRUE}
 # Function to detect missing values and replace them with the mean of that
 # variable
-not_available <- function(data, na.rm = F) {
+not_available <- function(data) {
   data[is.na(data)] <- mean(data, na.rm = T)
   data
 }
@@ -189,7 +189,7 @@ All variables present outliers, except the one that measures the plasma glucose 
 
 ```{r outliers, echo=TRUE, include=TRUE, warning=FALSE }
 # Function for finding the outliers
-outlier <- function(data, na.rm = T) {
+outlier <- function(data) {
   H <- 1.5 * IQR(data)
   data[data < quantile(data, 0.25, na.rm = T) - H] <- NA
   data[data > quantile(data, 0.75, na.rm = T) + H] <- NA
