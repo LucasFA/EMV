@@ -22,7 +22,7 @@ In this analysis we will now discuss using both a univariate and a multivariate 
 
 # Read the data
 ```{r ReadData}
-diabetes_full <- read.csv("diabetes.csv", header = TRUE, sep = ",", dec = ".")
+diabetes_full <- read.csv("diabetes.csv", stringsAsFactors = TRUE)
 head(diabetes_full)
 ```
 
@@ -52,8 +52,6 @@ In this dataset, all the missing values have been substituted by the number $0$.
 # Replace zeros of all columns with NA, so that we can use the functions to
 # detect missing values showed in class
 diabetes[diabetes == 0] <- NA
-diabetes[diabetes == "tested_positive"] <- 0
-diabetes[diabetes == "tested_negative"] <- 1
 head(diabetes)
 
 ### ----- i) -----
