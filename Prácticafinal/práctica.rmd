@@ -551,32 +551,38 @@ stats::factanal(diab_no_output, factors = 3, rotation = "none")
 
 ### Distribuciones marginales
 ```{r}
-# Representación mediante Histograma de cada variable para cada especie
-par(mfcol = c(2, 3))
-for (k in 2:4) {
-  j0 <- names(datos)[k]
-  # br0 <- seq(min(datos[, k]), max(datos[, k]), le = 11)
-  x0 <- seq(min(datos[, k]), max(datos[, k]), le = 50)
+# Print a histogram for each column giving the distribution of the class for each column
+par(mfrow = c(2, 4))
+for (k in seq_len(length(new_diab) - 1)) {
+  variable_name <- names(new_diab)[k]
   for (i in 1:2) {
-    i0 <- levels(datos$especie)[i]
-    x <- datos[datos$especie == i0, j0]
-    hist(x, proba = T, col = grey(0.8), main = paste("especie", i0), xlab = j0)
-    lines(x0, dnorm(x0, mean(x), sd(x)), col = "red", lwd = 2)
+    output_res <- levels(new_diab$class)[i]
+    x <- new_diab[new_diab$class == output_res, variable_name]
+    hist(x,
+      breaks = 20,
+      main = paste("Histogram", variable_name, "for", output_res),
+      xlab = variable_name,
+      col = i + 1
+    )
   }
 }
 ```
 
+```
 ### Gráficos QQ-plot
 ```{r}
 # Representación de cuantiles normales de cada variable para cada especie
-par(mfrow = c(2, 3))
-for (k in 2:4) {
-  j0 <- names(datos)[k]
-  x0 <- seq(min(datos[, k]), max(datos[, k]), le = 50)
+par(mfrow = c(2, 4))
+for (k in seq_len(length(new_diab) - 1)) {
+  name_variable <- names(new_diab)[k]
+  some_seq <- seq(min(new_diab[, k]), max(new_diab[, k]), le = 50)
   for (i in 1:2) {
-    i0 <- levels(datos$especie)[i]
-    x <- datos[datos$especie == i0, j0]
-    qqnorm(x, main = paste("especie", i0, j0), pch = 19, col = i + 1)
+    level <- levels(new_diab$class)[i]
+    x <- new_diab[new_diab$class == level, name_variable]
+    qqnorm(x,
+      main = paste("QQ-plot", name_variable, "for", level),
+      pch = 19,
+      col = i + 1)
     qqline(x)
   }
 }
@@ -590,8 +596,22 @@ We previously saw that the data was not normally distributed with the Shapiro-Wi
 
 
 #### Multivariate
-<!-- TODO -->
 
+Due to the sensibility of the multivariate normality test to outliers, we check again: 
+```{r}
+outliers <- MVN::mvn(data = diab_no_output, mvnTest = "hz", multivariateOutlierMethod = "quan")
+```
+
+And with them removed we use two tests to check for normality
+
+```{r}
+royston_test <- MVN::mvn(data = diab_no_output, mvnTest = "royston", multivariatePlot = "qq")
+
+royston_test$multivariateNormality
+
+hz_test <- MVN::mvn(data = diab_no_output, mvnTest = "hz")
+hz_test$multivariateNormality
+```
 <!-- g -->
 ## Classifier
 
