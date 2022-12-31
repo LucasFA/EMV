@@ -413,7 +413,7 @@ hist(as.numeric(unlist(new_diab[8])),
 ```
 
 
-## Análisis exploratorio multivariante
+## Multivariate exploratory analysis
 
 Eliminamos la variable respuesta categórica
 ```{r}
@@ -545,22 +545,21 @@ stats::factanal(diab_no_output, factors = 3, rotation = "none")
 
 
 <!-- f -->
-## Multivariante multivariate
+## Multivariate normality testing
 
 <!-- TODO: adapt to our use case -->
 
-### Distribuciones marginales
+### Marginal distributions
 ```{r}
-# Print a histogram for each column giving the distribution of the class for each column
 par(mfrow = c(2, 4))
 for (k in seq_len(length(new_diab) - 1)) {
   variable_name <- names(new_diab)[k]
   for (i in 1:2) {
-    output_res <- levels(new_diab$class)[i]
-    x <- new_diab[new_diab$class == output_res, variable_name]
+    output_result <- levels(new_diab$class)[i]
+    x <- new_diab[new_diab$class == output_result, variable_name]
     hist(x,
       breaks = 20,
-      main = paste("Histogram", variable_name, "for", output_res),
+      main = paste("Histogram", variable_name, "for", output_result),
       xlab = variable_name,
       col = i + 1
     )
@@ -577,10 +576,10 @@ for (k in seq_len(length(new_diab) - 1)) {
   name_variable <- names(new_diab)[k]
   some_seq <- seq(min(new_diab[, k]), max(new_diab[, k]), le = 50)
   for (i in 1:2) {
-    level <- levels(new_diab$class)[i]
-    x <- new_diab[new_diab$class == level, name_variable]
+    output_result <- levels(new_diab$class)[i]
+    x <- new_diab[new_diab$class == output_result, name_variable]
     qqnorm(x,
-      main = paste("QQ-plot", name_variable, "for", level),
+      main = paste("QQ-plot", name_variable, "for", output_result),
       pch = 19,
       col = i + 1)
     qqline(x)
