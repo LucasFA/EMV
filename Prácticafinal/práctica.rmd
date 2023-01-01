@@ -663,6 +663,8 @@ test_error <- mean(test_data$class != pred$class) * 100
 paste("Out of sample error = ", test_error, "%")
 ```
 
+Due to the high number of dimensions and the high error rate in classification, visualizing the data is not very insightful in this case.
+
 ### Quadratic Discriminant
 
 ```{r}
@@ -684,3 +686,8 @@ biotools::confusionmatrix(test_data$class, pred$class)
 test_error <- mean(test_data$class != pred$class) * 100
 paste("Out of sample error = ", test_error, "%")
 ```
+
+### Conclusion
+
+Despite the fact that the data is not normally distributed, both the LDA and QDA models show a possible discriminant, albeit with a high error rate. The LDA model has a slightly lower out-of-sample error, but the difference is not significant. In addition, it is simpler and thus easier to interpret.
+
