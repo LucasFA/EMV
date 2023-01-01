@@ -187,18 +187,7 @@ outlier <- function(data) {
 no_out_data <- as.data.frame(apply(new_diab[1:7], 2, outlier))
 
 # Standardize now the data without outliers
-no_out.plas <- (no_out_data$plas - mean(no_out_data$plas)) / sd(no_out_data$plas)
-no_out.pres <- (no_out_data$pres - mean(no_out_data$pres)) / sd(no_out_data$pres)
-no_out.skin <- (no_out_data$skin - mean(no_out_data$skin)) / sd(no_out_data$skin)
-no_out.insu <- (no_out_data$insu - mean(no_out_data$insu)) / sd(no_out_data$insu)
-no_out.mass <- (no_out_data$mass - mean(no_out_data$mass)) / sd(no_out_data$mass)
-no_out.pedi <- (no_out_data$pedi - mean(no_out_data$pedi)) / sd(no_out_data$pedi)
-no_out.age <- (no_out_data$age - mean(no_out_data$age)) / sd(no_out_data$age)
-
-no_out_standard <- cbind(
-  no_out.plas, no_out.pres, no_out.skin, no_out.insu,
-  no_out.mass, no_out.pedi, no_out.age
-)
+no_out_standard <- lapply(no_out_data, function(column) (column - mean(column)) / sd(column))
 
 # Boxplots without outliers
 boxplot(no_out_standard,
