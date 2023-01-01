@@ -413,7 +413,7 @@ summary(PCA)
 ### Number of components
 We need the function `fviz_screeplot` from the `factoextra` package.
 
-```{r}
+```{r, results = FALSE, message=FALSE, warning=FALSE}
 library(factoextra)
 ```
 
@@ -518,7 +518,7 @@ stats::factanal(diab_no_output, factors = 3, rotation = "none")
 ```
 
 ### Note
-Notice that we receive a warning about this being an Ultra-Heywood case. According to the literature, this means the model is not reliable. In short, it is a case in which the communalities exceed $1$. There could be several reasons for this.
+Notice that we received a warning about this being an Ultra-Heywood case. According to the literature, this means the model is not reliable. In short, it is a case in which the communalities exceed $1$. There could be several reasons for this.
 
 <!-- f -->
 ## Multivariate normality testing
@@ -556,7 +556,8 @@ for (k in seq_len(length(new_diab) - 1)) {
     qqnorm(x,
       main = paste("QQ-plot", name_variable, "for", output_result),
       pch = 19,
-      col = i + 1)
+      col = i + 1
+    )
     qqline(x)
   }
 }
