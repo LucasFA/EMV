@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output:
   html_document: 
     toc: true
-    toc_depth: 3
+    toc_depth: 2
     number_sections: false
     toc_float: 
       collapsed: false
@@ -518,12 +518,10 @@ stats::factanal(diab_no_output, factors = 3, rotation = "none")
 ```
 
 ### Note
-Notice that we received a warning about this being an Ultra-Heywood case. According to the literature, this means the model is not reliable. In short, it is a case in which the communalities exceed $1$. There could be several reasons for this.
+Notice that we received a warning about this being an Ultra-Heywood case. According to the literature, this means the model is not reliable, and there could be several reasons for this.
 
 <!-- f -->
 ## Multivariate normality testing
-
-<!-- TODO: adapt to our use case -->
 
 ### Marginal distributions
 ```{r}
@@ -545,7 +543,6 @@ for (k in seq_len(length(new_diab) - 1)) {
 
 ### QQ-plots
 ```{r}
-# Representación de cuantiles normales de cada variable para cada especie
 par(mfrow = c(2, 4))
 for (k in seq_len(length(new_diab) - 1)) {
   name_variable <- names(new_diab)[k]
