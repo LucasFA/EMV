@@ -113,43 +113,25 @@ summaryData <- summary(new_diab[1:7])
 s <- matrix(c(as.numeric(sub(".*:", "", summaryData))), ncol = 7, byrow = FALSE)
 
 # Standard deviations
-sd_plas <- sd(new_diab$plas)
-sd_pres <- sd(new_diab$pres)
-sd_skin <- sd(new_diab$skin)
-sd_insu <- sd(new_diab$insu)
-sd_mass <- sd(new_diab$mass)
-sd_pedi <- sd(new_diab$pedi)
-sd_age <- sd(new_diab$age)
+sd <- lapply(new_diab[1:7], sd)
 
 # Skewness
-skew_plas <- skewness(new_diab$plas)
-skew_pres <- skewness(new_diab$pres)
-skew_skin <- skewness(new_diab$skin)
-skew_insu <- skewness(new_diab$insu)
-skew_mass <- skewness(new_diab$mass)
-skew_pedi <- skewness(new_diab$pedi)
-skew_age <- skewness(new_diab$age)
+skew <- lapply(new_diab[1:7], skewness)
 
 # Kurtosis
-kurt_plas <- kurtosis(new_diab$plas)
-kurt_pres <- kurtosis(new_diab$pres)
-kurt_skin <- kurtosis(new_diab$skin)
-kurt_insu <- kurtosis(new_diab$insu)
-kurt_mass <- kurtosis(new_diab$mass)
-kurt_pedi <- kurtosis(new_diab$pedi)
-kurt_age <- kurtosis(new_diab$age)
+kurt <- lapply(new_diab[1:7], kurtosis)
 
 
 # Create the table
 
 tabl <- matrix(c(
   s[4, 1], s[4, 2], s[4, 3], s[4, 4], s[4, 5], s[4, 6], s[4, 7],
-  sd_plas, sd_pres, sd_skin, sd_insu, sd_mass, sd_pedi, sd_age,
+  sd$plas, sd$pres, sd$skin, sd$insu, sd$mass, sd$pedi, sd$age,
   s[2, 1], s[2, 2], s[2, 3], s[2, 4], s[2, 5], s[2, 6], s[2, 7],
   s[3, 1], s[3, 2], s[3, 3], s[3, 4], s[3, 5], s[3, 6], s[3, 7],
   s[5, 1], s[5, 2], s[5, 3], s[5, 4], s[5, 5], s[5, 6], s[5, 7],
-  skew_plas, skew_pres, skew_skin, skew_insu, skew_mass, skew_pedi, skew_age,
-  kurt_plas, kurt_pres, kurt_skin, kurt_insu, kurt_mass, kurt_pedi, kurt_age
+  skew$plas, skew$pres, skew$skin, skew$insu, skew$mass, skew$pedi, skew$age,
+  kurt$plas, kurt$pres, kurt$skin, kurt$insu, kurt$mass, kurt$pedi, kurt$age
 ),
 ncol = 7, byrow = TRUE
 )
@@ -170,13 +152,13 @@ kable(tabl, digits = 3, align = rep("c", 7), caption = "Main statistical charact
 The data are collected in the appropriate, but of course different, measuring scales, so in order to be able to compare them with boxplots, we need to standardize the data.
 ```{r BoxplotStand, echo=TRUE}
 # Standardize the variables
-v_plas <- (new_diab[1] - s[4, 1]) / sd_plas
-v_pres <- (new_diab[2] - s[4, 2]) / sd_pres
-v_skin <- (new_diab[3] - s[4, 3]) / sd_skin
-v_insu <- (new_diab[4] - s[4, 4]) / sd_insu
-v_mass <- (new_diab[5] - s[4, 5]) / sd_mass
-v_pedi <- (new_diab[6] - s[4, 6]) / sd_pedi
-v_age <- (new_diab[7] - s[4, 7]) / sd_age
+v_plas <- (new_diab[1] - s[4, 1]) / sd$plas
+v_pres <- (new_diab[2] - s[4, 2]) / sd$pres
+v_skin <- (new_diab[3] - s[4, 3]) / sd$skin
+v_insu <- (new_diab[4] - s[4, 4]) / sd$insu
+v_mass <- (new_diab[5] - s[4, 5]) / sd$mass
+v_pedi <- (new_diab[6] - s[4, 6]) / sd$pedi
+v_age <- (new_diab[7] - s[4, 7]) / sd$age
 
 # Boxplot of the data
 standardData <- cbind(v_plas, v_pres, v_skin, v_insu, v_mass, v_pedi, v_age)
