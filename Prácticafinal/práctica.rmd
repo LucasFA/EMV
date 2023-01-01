@@ -543,7 +543,7 @@ for (k in seq_len(length(new_diab) - 1)) {
 }
 ```
 
-### Gráficos QQ-plot
+### QQ-plots
 ```{r}
 # Representación de cuantiles normales de cada variable para cada especie
 par(mfrow = c(2, 4))
@@ -606,75 +606,74 @@ biotools::boxM(
 )
 ```
 
-#### Training-test split
-
+#### Pipeline
 ```{r}
-set.seed(42)
-training_rows <- sample(
-  nrow(new_diab),
-  size = 0.75 * nrow(new_diab),
-  replace = TRUE
-)
-training_data <- new_diab[training_rows, ]
-test_data <- new_diab[-training_rows, ]
+pipeline_model <- function(data, model_name, formula = class ~ plas + pres + skin + insu + mass + pedi + age) {
+  set.seed(42)
+  training_rows <- sample(
+    nrow(data),
+    size = 0.75 * nrow(data),
+    replace = FALSE
+  )
+  training_data <- data[training_rows, ]
+  test_data <- data[-training_rows, ]
+
+  myformula <- formula
+
+  model <-
+    if (model_name == "lda") {
+      MASS::lda(formula = myformula, data = training_data)
+    } else if (model_name == "qda") {
+      MASS::qda(formula = myformula, data = training_data)
+    } else {
+      stop("Model not supported")
+    }
+
+  # In sample error
+  in_sample_pred <- predict(model, training_data)
+  print(biotools::confusionmatrix(training_data$class, in_sample_pred$class))
+  training_error <- mean(training_data$class != in_sample_pred$class) * 100
+  print(paste("In sample error = ", training_error, "%"))
+
+  # Out of sample error
+  pred <- predict(model, test_data)
+  print(biotools::confusionmatrix(test_data$class, pred$class))
+  test_error <- mean(test_data$class != pred$class) * 100
+  print(paste("Out of sample error = ", test_error, "%"))
+
+  model
+}
 ```
 
-### Linear Discriminant
+### Linear Discriminant and cross-validation
+
 ```{r}
-lda_model <- MASS::lda(formula = class ~ plas + pres + skin + insu + mass + pedi + age, data = training_data)
+lda_model <- pipeline_model(new_diab, "lda")
 lda_model
-```
-
-#### Cross-validation
-
-```{r}
-# In sample error
-in_sample_pred <- predict(lda_model, training_data)
-biotools::confusionmatrix(training_data$class, in_sample_pred$class)
-training_error <- mean(training_data$class != in_sample_pred$class) * 100
-paste("In sample error = ", training_error, "%")
-
-# Out of sample error
-pred <- predict(lda_model, test_data)
-biotools::confusionmatrix(test_data$class, pred$class)
-
-test_error <- mean(test_data$class != pred$class) * 100
-paste("Out of sample error = ", test_error, "%")
 ```
 
 Due to the high number of dimensions and the high error rate in classification, visualizing the data is not very insightful in this case.
 
-### Quadratic Discriminant
+### Quadratic Discriminant and cross-validation
 
 ```{r}
-qda_model <- MASS::qda(formula = class ~ plas + pres + skin + insu + mass + pedi + age, data = training_data)
+qda_model <- pipeline_model(new_diab, "qda")
 qda_model
-```
-
-#### Cross-validation
-```{r}
-# In sample error
-in_sample_pred <- predict(qda_model, training_data)
-biotools::confusionmatrix(training_data$class, in_sample_pred$class)
-training_error <- mean(training_data$class != in_sample_pred$class) * 100
-paste("In sample error = ", training_error, "%")
-
-# Out of sample error
-pred <- predict(qda_model, test_data)
-biotools::confusionmatrix(test_data$class, pred$class)
-test_error <- mean(test_data$class != pred$class) * 100
-paste("Out of sample error = ", test_error, "%")
 ```
 
 ### Conclusion
 
-Despite the fact that the data is not normally distributed, both the LDA and QDA models show a possible discriminant, albeit with a high error rate. The LDA model also has a slightly lower out-of-sample error and is simpler and thus easier to interpret. 
+Despite the fact that the data is not normally distributed, both the LDA and QDA models show a possible discriminant, albeit with a high error rate. 
 
-## Feature engineering
+
+# Feature engineering
+
+First off, we are going to resample the dataset for NA's, instead of replacing the value with the mean. To see why this might be a good idea, let's plot the distribution of the data.
+
 ```{r}
 col_hist <- function(column, main, xlab) {
-  # Warning: hidden dependency on new_diab
   hist(column,
+    breaks = 20,
     probability = TRUE,
     col = "lightblue",
     main = main,
@@ -683,9 +682,11 @@ col_hist <- function(column, main, xlab) {
   lines(density(column), col = "blue")
 
   x <- seq(min(column), max(column), length.out = 100)
-  normal <- dnorm(x = x,
+  normal <- dnorm(
+    x = x,
     mean = mean(column),
-    sd = sd(column))
+    sd = sd(column)
+  )
 
   lines(
     x = x,
@@ -694,6 +695,7 @@ col_hist <- function(column, main, xlab) {
   )
 }
 
+par(mfrow = c(2, 2))
 for (k in seq_len(length(new_diab) - 1)) {
   column <- new_diab[, k]
   column_name <- names(new_diab)[k]
@@ -701,3 +703,206 @@ for (k in seq_len(length(new_diab) - 1)) {
   col_hist(column, hist_title, column_name)
 }
 ```
+
+Notice that some variables have a very pronounced mode in exactly the mean. This is because the mean is being used to replace the NA's. This is not a good idea, as it will skew the data. Instead, we will resample the data, and replace the NA's with the resampled values.
+
+```{r}
+diabetes_resampled <-
+  diabetes |>
+  lapply(function(column) {
+    column[column == 0] <- NA
+    replace(
+      column,
+      is.na(column),
+      sample(
+        column[!is.na(column)],
+        sum(is.na(column)),
+        replace = TRUE
+      )
+    )
+  }) |>
+  data.frame()
+```
+
+Visualizing this new data:
+
+```{r}
+par(mfrow = c(2, 2))
+for (k in seq_len(length(diabetes_resampled) - 1)) {
+  column <- diabetes_resampled[, k]
+  column_name <- names(diabetes_resampled)[k]
+  hist_title <- paste("Histogram of", column_name)
+  col_hist(column, hist_title, column_name)
+}
+```
+And we test the normality of the data using the Shapiro-Wilk test:
+```{r}
+lapply(diabetes_resampled[1:7], shapiro.test)
+```
+
+Still not normal at this point.
+
+```{r}
+par(mfrow = c(2, 4))
+for (k in seq_len(length(diabetes_resampled) - 1)) {
+  name_variable <- names(diabetes_resampled)[k]
+  some_seq <- seq(min(diabetes_resampled[, k]), max(diabetes_resampled[, k]), le = 50)
+  for (i in 1:2) {
+    output_result <- levels(diabetes_resampled$class)[i]
+    x <- diabetes_resampled[diabetes_resampled$class == output_result, name_variable]
+    qqnorm(x,
+      main = paste("QQ-plot", name_variable, "for", output_result),
+      pch = 19,
+      col = i + 1
+    )
+    qqline(x)
+  }
+}
+par(mfrow = c(1, 1))
+```
+
+These distributions resemble the normal distribution more closely, so we can try to use the LDA and QDA models again.
+
+### Linear Discriminant
+```{r}
+lda_model <- pipeline_model(diabetes_resampled, "lda")
+lda_model
+```
+
+### Quadratic Discriminant
+
+```{r}
+qda_model <- pipeline_model(diabetes_resampled, "qda")
+qda_model
+```
+
+## Feature transformations
+
+We can make some transformations to the data. 
+```{r}
+diabetes_transformed <- diabetes_resampled |>
+  transform(
+    plas_log = log(plas),
+    pres = pres,
+    skin = skin,
+    insu = insu,
+    mass = mass,
+    pedi_log = log(pedi),
+    age = age
+  )
+# remove plas, pedi
+diabetes_transformed <- diabetes_transformed[, -c(1, 6)]
+
+temp <- diabetes_transformed$class
+diabetes_transformed$class <- NULL
+diabetes_transformed$class <- temp
+```
+
+```{r}
+shapiro.test(diabetes_transformed$plas_log)
+shapiro.test(diabetes_transformed$pedi_log)
+```
+
+We are finally succesful in transforming the data to a "more normal" distribution. Notice that the transformed variables have a much higher $p$-value in the shapiro test than they originally did.
+
+In particular, let's compare the original and transformed data for the variables `plas` and `pedi`.
+
+For `plas`:
+```{r}
+par(mfrow = c(2, 2))
+for (i in 1:2) {
+  output_result <- levels(diabetes_transformed$class)[i]
+  x <- diabetes_transformed[diabetes_transformed$class == output_result, "plas_log"]
+  qqnorm(x,
+    main = paste("QQ-plot", "plas_log", "for", output_result),
+    xlab = "Transformed data",
+    pch = 19,
+    col = i + 1
+  )
+  qqline(x)
+}
+
+for (i in 1:2) {
+  output_result <- levels(diabetes_resampled$class)[i]
+  x <- diabetes_resampled[diabetes_resampled$class == output_result, "plas"]
+  qqnorm(x,
+    main = paste("QQ-plot", "plas", "for", output_result),
+    xlab = "Original data",
+    pch = 19,
+    col = i + 1
+  )
+  qqline(x)
+}
+```
+
+And for `pedi`
+```{r}
+par(mfrow = c(2, 2))
+for (i in 1:2) {
+  output_result <- levels(diabetes_transformed$class)[i]
+  x <- diabetes_transformed[diabetes_transformed$class == output_result, "pedi_log"]
+  qqnorm(x,
+    main = paste("QQ-plot", "pedi_log", "for", output_result),
+    xlab = "Transformed data",
+    pch = 19,
+    col = i + 1
+  )
+  qqline(x)
+}
+
+for (i in 1:2) {
+  output_result <- levels(diabetes_resampled$class)[i]
+  x <- diabetes_resampled[diabetes_resampled$class == output_result, "pedi"]
+  qqnorm(x,
+    main = paste("QQ-plot", "pedi", "for", output_result),
+    xlab = "Original data",
+    pch = 19,
+    col = i + 1
+  )
+  qqline(x)
+}
+par(mfrow = c(1, 1))
+```
+
+In both cases, the transformed data fits the normal slightly better.
+Plotting the histogram:
+
+```{r}
+par(mfrow = c(2, 2))
+for (k in 6:7) {
+  column <- diabetes_transformed[, k]
+  column_name <- names(diabetes_transformed)[k]
+  hist_title <- paste("Histogram of", column_name)
+  col_hist(column, hist_title, column_name)
+}
+
+for (k in 1:2) {
+  column <- diabetes_resampled[, k]
+  column_name <- names(diabetes_resampled)[k]
+  hist_title <- paste("Histogram of", column_name)
+  col_hist(column, hist_title, column_name)
+}
+```
+
+### Linear Discriminant
+```{r}
+lda_model <- pipeline_model(
+  diabetes_transformed,
+  formula = class ~ pres + skin + insu + mass + age + plas_log + pedi_log,
+ "lda")
+lda_model
+```
+
+### Quadratic Discriminant
+```{r}
+qda_model <- pipeline_model(
+  diabetes_transformed,
+  formula = class ~ pres + skin + insu + mass + age + plas_log + pedi_log,
+ "qda")
+qda_model
+```
+
+Unfortunately, these transformations do not seem to improve the models.
+
+
+## Conclusion
