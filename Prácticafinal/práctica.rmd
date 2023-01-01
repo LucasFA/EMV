@@ -207,150 +207,150 @@ We analyse if the data are normally distributed. For a perfect normal distributi
 par(mfrow = c(2, 4))
 
 # Plasma glucose concentration
-qqnorm(no_out.plas,
+qqnorm(no_out_standard$plas,
   main = "Plasma glucose concentration",
   col = "cyan3",
   cex.lab = 1.2, cex.main = 1.5,
   xlab = "Theoretical quantiles (normal distribution)",
   ylab = "Empirical quantiles"
 )
-qqline(no_out.plas, distribution = qnorm)
+qqline(no_out_standard$plas, distribution = qnorm)
 
-h_plas <- hist(no_out.plas,
+h_plas <- hist(no_out_standard$plas,
   col = "cyan3",
   ylab = "Frequency",
   main = "",
   cex.lab = 1.2
 )
-xfit <- seq(min(no_out.plas), max(no_out.plas), length = 100)
-yfit <- dnorm(xfit, mean = mean(no_out.plas), sd = sd(no_out.plas))
-yfit <- yfit * diff(h_plas$mids[1:2]) * length(no_out.plas)
+xfit <- seq(min(no_out_standard$plas), max(no_out_standard$plas), length = 100)
+yfit <- dnorm(xfit, mean = mean(no_out_standard$plas), sd = sd(no_out_standard$plas))
+yfit <- yfit * diff(h_plas$mids[1:2]) * length(no_out_standard$plas)
 lines(xfit, yfit, col = "black", lwd = 2)
 
 # Diastolic blood pressure
-qqnorm(no_out.pres,
+qqnorm(no_out_standard$pres,
   main = "Diastolic blood pressure",
   col = "orange1",
   cex.lab = 1.2, cex.main = 1.5,
   xlab = "Theoretical quantiles (normal distribution)",
   ylab = "Empirical quantiles"
 )
-qqline(no_out.pres, distribution = qnorm)
+qqline(no_out_standard$pres, distribution = qnorm)
 
-h_pres <- hist(no_out.pres,
+h_pres <- hist(no_out_standard$pres,
   col = "orange1",
   ylab = "Frequency",
   main = "",
   cex.lab = 1.2
 )
-xfit <- seq(min(no_out.pres), max(no_out.pres), length = 100)
-yfit <- dnorm(xfit, mean = mean(no_out.pres), sd = sd(no_out.pres))
-yfit <- yfit * diff(h_pres$mids[1:2]) * length(no_out.pres)
+xfit <- seq(min(no_out_standard$pres), max(no_out_standard$pres), length = 100)
+yfit <- dnorm(xfit, mean = mean(no_out_standard$pres), sd = sd(no_out_standard$pres))
+yfit <- yfit * diff(h_pres$mids[1:2]) * length(no_out_standard$pres)
 lines(xfit, yfit, col = "black", lwd = 2)
 
 # Triceps thickness
-qqnorm(no_out.skin,
+qqnorm(no_out_standard$skin,
   main = "Triceps thickness",
   col = "chartreuse2",
   cex.lab = 1.2, cex.main = 1.5,
   xlab = "Theoretical quantiles (normal distribution)",
   ylab = "Empirical quantiles",
 )
-qqline(no_out.skin, distribution = qnorm)
+qqline(no_out_standard$skin, distribution = qnorm)
 
-h_skin <- hist(no_out.skin,
+h_skin <- hist(no_out_standard$skin,
   col = "orchid2",
   ylab = "chartreuse2",
   main = "",
   cex.lab = 1.2
 )
-xfit <- seq(min(no_out.skin), max(no_out.skin), length = 100)
-yfit <- dnorm(xfit, mean = mean(no_out.skin), sd = sd(no_out.skin))
-yfit <- yfit * diff(h_skin$mids[1:2]) * length(no_out.skin)
+xfit <- seq(min(no_out_standard$skin), max(no_out_standard$skin), length = 100)
+yfit <- dnorm(xfit, mean = mean(no_out_standard$skin), sd = sd(no_out_standard$skin))
+yfit <- yfit * diff(h_skin$mids[1:2]) * length(no_out_standard$skin)
 lines(xfit, yfit, col = "black", lwd = 2)
 
 # Insulin
-qqnorm(no_out.insu,
+qqnorm(no_out_standard$insu,
   main = "Insulin",
   col = "cornflowerblue",
   cex.lab = 1.2, cex.main = 1.5,
   xlab = "Theoretical quantiles (normal distribution)",
   ylab = "Empirical quantiles",
 )
-qqline(no_out.insu, distribution = qnorm)
+qqline(no_out_standard$insu, distribution = qnorm)
 
-h_insu <- hist(no_out.insu,
+h_insu <- hist(no_out_standard$insu,
   col = "cornflowerblue",
   ylab = "Frequency",
   main = "",
   cex.lab = 1.2
 )
-xfit <- seq(min(no_out.insu), max(no_out.insu), length = 100)
-yfit <- dnorm(xfit, mean = mean(no_out.insu), sd = sd(no_out.insu))
-yfit <- yfit * diff(h_insu$mids[1:2]) * length(no_out.insu)
+xfit <- seq(min(no_out_standard$insu), max(no_out_standard$insu), length = 100)
+yfit <- dnorm(xfit, mean = mean(no_out_standard$insu), sd = sd(no_out_standard$insu))
+yfit <- yfit * diff(h_insu$mids[1:2]) * length(no_out_standard$insu)
 lines(xfit, yfit, col = "black", lwd = 2)
 
 # Body mass index
-qqnorm(no_out.mass,
+qqnorm(no_out_standard$mass,
   main = "Body mass index",
   col = "blueviolet",
   cex.lab = 1.2, cex.main = 1.5,
   xlab = "Theoretical quantiles (normal distribution)",
   ylab = "Empirical quantiles",
 )
-qqline(no_out.mass, distribution = qnorm)
+qqline(no_out_standard$mass, distribution = qnorm)
 
-h_mass <- hist(no_out.mass,
+h_mass <- hist(no_out_standard$mass,
   col = "blueviolet",
   ylab = "Frequency",
   main = "",
   cex.lab = 1.2
 )
-xfit <- seq(min(no_out.mass), max(no_out.mass), length = 100)
-yfit <- dnorm(xfit, mean = mean(no_out.mass), sd = sd(no_out.mass))
-yfit <- yfit * diff(h_mass$mids[1:2]) * length(no_out.mass)
+xfit <- seq(min(no_out_standard$mass), max(no_out_standard$mass), length = 100)
+yfit <- dnorm(xfit, mean = mean(no_out_standard$mass), sd = sd(no_out_standard$mass))
+yfit <- yfit * diff(h_mass$mids[1:2]) * length(no_out_standard$mass)
 lines(xfit, yfit, col = "black", lwd = 2)
 
 # Pedigree function
-qqnorm(no_out.pedi,
+qqnorm(no_out_standard$pedi,
   main = "Pedigree function",
   col = "orchid2",
   cex.lab = 1.2, cex.main = 1.5,
   xlab = "Theoretical quantiles (normal distribution)",
   ylab = "Empirical quantiles",
 )
-qqline(no_out.pedi, distribution = qnorm)
+qqline(no_out_standard$pedi, distribution = qnorm)
 
-h_pedi <- hist(no_out.pedi,
+h_pedi <- hist(no_out_standard$pedi,
   col = "orchid2",
   ylab = "Frequency",
   main = "",
   cex.lab = 1.2
 )
-xfit <- seq(min(no_out.pedi), max(no_out.pedi), length = 100)
-yfit <- dnorm(xfit, mean = mean(no_out.pedi), sd = sd(no_out.pedi))
-yfit <- yfit * diff(h_pedi$mids[1:2]) * length(no_out.pedi)
+xfit <- seq(min(no_out_standard$pedi), max(no_out_standard$pedi), length = 100)
+yfit <- dnorm(xfit, mean = mean(no_out_standard$pedi), sd = sd(no_out_standard$pedi))
+yfit <- yfit * diff(h_pedi$mids[1:2]) * length(no_out_standard$pedi)
 lines(xfit, yfit, col = "black", lwd = 2)
 
 # Age
-qqnorm(no_out.age,
+qqnorm(no_out_standard$age,
   main = "Age",
   col = "coral1",
   cex.lab = 1.2, cex.main = 1.5,
   xlab = "Theoretical quantiles (normal distribution)",
   ylab = "Empirical quantiles",
 )
-qqline(no_out.age, distribution = qnorm)
+qqline(no_out_standard$age, distribution = qnorm)
 
-h_age <- hist(no_out.age,
+h_age <- hist(no_out_standard$age,
   col = "coral1",
   ylab = "Frequency",
   main = "",
   cex.lab = 1.2
 )
-xfit <- seq(min(no_out.age), max(no_out.age), length = 100)
-yfit <- dnorm(xfit, mean = mean(no_out.age), sd = sd(no_out.age))
-yfit <- yfit * diff(h_age$mids[1:2]) * length(no_out.age)
+xfit <- seq(min(no_out_standard$age), max(no_out_standard$age), length = 100)
+yfit <- dnorm(xfit, mean = mean(no_out_standard$age), sd = sd(no_out_standard$age))
+yfit <- yfit * diff(h_age$mids[1:2]) * length(no_out_standard$age)
 lines(xfit, yfit, col = "black", lwd = 2)
 ```
 
@@ -361,16 +361,16 @@ To conclude this first part, we test for normality with a Shapiro-Wilk test.
 # The null hypothesis of these tests is that “sample distribution is normal”. If the test is significant, the distribution is non-normal.
 # All tests reject, so all the variables are non-normal
 
-shapiro.test(no_out.plas)
-shapiro.test(no_out.pres)
-shapiro.test(no_out.skin)
-shapiro.test(no_out.insu)
-shapiro.test(no_out.mass)
-shapiro.test(no_out.pedi)
-shapiro.test(no_out.age)
+shapiro.test(no_out_standard$plas)
+shapiro.test(no_out_standard$pres)
+shapiro.test(no_out_standard$skin)
+shapiro.test(no_out_standard$insu)
+shapiro.test(no_out_standard$mass)
+shapiro.test(no_out_standard$pedi)
+shapiro.test(no_out_standard$age)
 ```
 
-As expected, all tests reject the null hypothesis of normality in favor of the alternative. With a significance level of $\alpha = 0.05$ we can assume that none of the variable is normally distributed. Interesting is to note that, when testing the normality of the blood pressure the p-value obtained is `r round(as.numeric(shapiro.test(no_out.pres)$p.value), digits = 4)`. This suggest that if we made a test at a significance level of $0.01$, we would not have rejected the null hypotesis so we would have assumed that the variable `pres` is normally distributed. For all the other cases, the p-values are smaller then the $0.001$ so we would have rejected normality in every case. \
+As expected, all tests reject the null hypothesis of normality in favor of the alternative. With a significance level of $\alpha = 0.05$ we can assume that none of the variable is normally distributed. Interesting is to note that, when testing the normality of the blood pressure the p-value obtained is `r round(as.numeric(shapiro.test(no_out_standard$pres)$p.value), digits = 4)`. This suggest that if we made a test at a significance level of $0.01$, we would not have rejected the null hypotesis so we would have assumed that the variable `pres` is normally distributed. For all the other cases, the p-values are smaller then the $0.001$ so we would have rejected normality in every case. \
 Finally, with an histogram we visualized that $500$ females out of $768$ have been tested negative, while the remaining $268$ present signs of diabetes.
 
 ```{r HistResponse, echo=TRUE}
@@ -669,4 +669,34 @@ paste("Out of sample error = ", test_error, "%")
 
 Despite the fact that the data is not normally distributed, both the LDA and QDA models show a possible discriminant, albeit with a high error rate. The LDA model also has a slightly lower out-of-sample error and is simpler and thus easier to interpret. 
 
+## Feature engineering
+```{r}
+col_hist <- function(column, main, xlab) {
+  # Warning: hidden dependency on new_diab
+  hist(column,
+    probability = TRUE,
+    col = "lightblue",
+    main = main,
+    xlab = xlab
+  )
+  lines(density(column), col = "blue")
 
+  x <- seq(min(column), max(column), length.out = 100)
+  normal <- dnorm(x = x,
+    mean = mean(column),
+    sd = sd(column))
+
+  lines(
+    x = x,
+    y = normal,
+    col = "red"
+  )
+}
+
+for (k in seq_len(length(new_diab) - 1)) {
+  column <- new_diab[, k]
+  column_name <- names(new_diab)[k]
+  hist_title <- paste("Histogram of", column_name)
+  col_hist(column, hist_title, column_name)
+}
+```
