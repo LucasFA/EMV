@@ -439,7 +439,7 @@ PCA$rotation
 plot(cumsum(PCA$sdev^2) / (sum(PCA$sdev^2)), type = "l") # check this
 summary(PCA)
 ```
-### Choosing the number of components
+### Number of components
 We need the function `fviz_screeplot` from the `factoextra` package.
 
 ```{r}
@@ -460,7 +460,7 @@ mean(PCA$sdev^2)
 Also suggests 3 components.
 
 <!-- TODO: where does this go? It doesn't seem to appear in the guide -->
-### Visualization of principal components
+### Visualization of components
 ```{r}
 fviz_pca_var(PCA,
   repel = TRUE, col.var = "cos2",
@@ -624,6 +624,8 @@ pairs(
 ```
 
 #### Homogeneity of variance
+
+The data did not follow a normal distribution, and it also isn't homogeneous in variance. 
 ```{r}
 biotools::boxM(
   data = new_diab[1:7],
@@ -695,5 +697,6 @@ paste("Out of sample error = ", test_error, "%")
 
 ### Conclusion
 
-Despite the fact that the data is not normally distributed, both the LDA and QDA models show a possible discriminant, albeit with a high error rate. The LDA model has a slightly lower out-of-sample error, but the difference is not significant. In addition, it is simpler and thus easier to interpret.
+Despite the fact that the data is not normally distributed, both the LDA and QDA models show a possible discriminant, albeit with a high error rate. The LDA model also has a slightly lower out-of-sample error and is simpler and thus easier to interpret. 
+
 
