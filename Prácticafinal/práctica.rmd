@@ -492,11 +492,11 @@ ggcorrplot::ggcorrplot(poly_cor, type = "lower", hc.order = T)
 corrplot::corrplot(cor(diab_no_output), order = "hclust", tl.col = "black", tl.cex = 1)
 ```
 
-### Actual FA
+### Factor 
 
 MLE model:
 ```{r}
-modelo1 <- fa(poly_cor,
+model1 <- fa(poly_cor,
   nfactors = 3,
   rotate = "none",
   fm = "mle"
@@ -504,7 +504,7 @@ modelo1 <- fa(poly_cor,
 ```
 Minimum residual model:
 ```{r}
-modelo2 <- fa(poly_cor,
+model2 <- fa(poly_cor,
   nfactors = 3,
   rotate = "none",
   fm = "minres"
@@ -512,8 +512,8 @@ modelo2 <- fa(poly_cor,
 ```
 Compare the communalities
 ```{r }
-c1 <- sort(modelo1$communality, decreasing = TRUE)
-c2 <- sort(modelo2$communality, decreasing = TRUE)
+c1 <- sort(model1$communality, decreasing = TRUE)
+c2 <- sort(model2$communality, decreasing = TRUE)
 head(cbind(c1, c2))
 ```
 
@@ -521,27 +521,33 @@ head(cbind(c1, c2))
 Compare the unicities 
 
 ```{r }
-u1 <- sort(modelo1$uniquenesses, decreasing = TRUE)
-u2 <- sort(modelo2$uniquenesses, decreasing = TRUE)
+u1 <- sort(model1$uniquenesses, decreasing = TRUE)
+u2 <- sort(model2$uniquenesses, decreasing = TRUE)
 head(cbind(u1, u2))
 ```
 
+### Determine the number of factors
 ```{r }
 scree(poly_cor)
 fa.parallel(poly_cor, n.obs = length(diab_no_output[, 1]), fa = "fa", fm = "minres")
 ```
 
+Both plots suggest using 3 factors.
+
+### Model
 ```{r }
-modelo_varimax <- fa(poly_cor,
+varimax_model <- fa(poly_cor,
   nfactors = 3, rotate = "varimax",
   fa = "mle"
 )
 
-print(modelo_varimax$loadings, cut = 0)
-fa.diagram(modelo_varimax)
+print(varimax_model$loadings, cut = 0)
+fa.diagram(varimax_model)
 stats::factanal(diab_no_output, factors = 3, rotation = "none")
 ```
 
+### Note
+Notice that we receive a warning about this being an Ultra-Heywood case. According to the literature, this means the model is not reliable. In short, it is a case in which the communalities exceed $1$. There could be several reasons for this.
 
 <!-- f -->
 ## Multivariate normality testing
