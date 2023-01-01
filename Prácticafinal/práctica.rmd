@@ -588,10 +588,7 @@ for (k in seq_len(length(new_diab) - 1)) {
 par(mfrow = c(1, 1))
 ```
 
-### Normality tests
-#### Univariate
-
-We previously saw that the data was not normally distributed with the Shapiro-Wilk test.
+In addition to this, we previously saw that the data was not normally distributed according to the Shapiro-Wilk test.
 
 
 #### Multivariate
@@ -620,4 +617,70 @@ pairs(
   col = c("green", "red")[new_diab$class],
   pch = 19
 )
+```
+
+#### Homogeneity of variance
+```{r}
+biotools::boxM(
+  data = new_diab,
+  grouping = new_diab[, 8]
+)
+```
+
+### Discriminants
+
+#### Training-test split
+
+```{r}
+set.seed(42)
+training_rows <- sample(
+  nrow(new_diab),
+  size = 0.75 * nrow(new_diab),
+  replace = TRUE
+)
+training_data <- new_diab[training_rows, ]
+test_data <- new_diab[-training_rows, ]
+```
+
+```{r}
+lda_model <- MASS::lda(formula = class ~ plas + pres + skin + insu + mass + pedi + age, data = training_data)
+lda_model
+```
+
+#### Cross-validation
+
+```{r}
+# In sample error
+in_sample_pred <- predict(lda_model, training_data)
+biotools::confusionmatrix(training_data$class, in_sample_pred$class)
+training_error <- mean(training_data$class != in_sample_pred$class) * 100
+paste("In sample error = ", training_error, "%")
+
+# Out of sample error
+pred <- predict(lda_model, test_data)
+biotools::confusionmatrix(test_data$class, pred$class)
+
+test_error <- mean(test_data$class != pred$class) * 100
+paste("Out of sample error = ", test_error, "%")
+```
+
+### Quadratic Discriminant
+
+```{r}
+qda_model <- MASS::qda(formula = class ~ plas + pres + skin + insu + mass + pedi + age, data = training_data)
+qda_model
+```
+
+```{r}
+# In sample error
+in_sample_pred <- predict(qda_model, training_data)
+biotools::confusionmatrix(training_data$class, in_sample_pred$class)
+training_error <- mean(training_data$class != in_sample_pred$class) * 100
+paste("In sample error = ", training_error, "%")
+
+# Out of sample error
+pred <- predict(qda_model, test_data)
+biotools::confusionmatrix(test_data$class, pred$class)
+test_error <- mean(test_data$class != pred$class) * 100
+paste("Out of sample error = ", test_error, "%")
 ```
