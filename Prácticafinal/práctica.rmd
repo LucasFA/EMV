@@ -615,6 +615,7 @@ hz_test$multivariateNormality
 <!-- g -->
 ## Classifier
 
+Visually, there is no clear variable that separates the two classes.
 ```{r}
 pairs(
   x = diab_no_output[sample(nrow(diab_no_output), 100), ],
@@ -625,15 +626,13 @@ pairs(
 
 #### Homogeneity of variance
 
-The data did not follow a normal distribution, and it also isn't homogeneous in variance. 
+The data already did not follow a normal distribution, so this test is somewhat superfluos, but we check and it also isn't homogeneous in variance. 
 ```{r}
 biotools::boxM(
   data = new_diab[1:7],
   grouping = new_diab[, 8]
 )
 ```
-
-### Discriminants
 
 #### Training-test split
 
@@ -648,7 +647,7 @@ training_data <- new_diab[training_rows, ]
 test_data <- new_diab[-training_rows, ]
 ```
 
-#### Linear Discriminant
+### Linear Discriminant
 ```{r}
 lda_model <- MASS::lda(formula = class ~ plas + pres + skin + insu + mass + pedi + age, data = training_data)
 lda_model
