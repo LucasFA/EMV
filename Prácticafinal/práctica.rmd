@@ -512,8 +512,8 @@ modelo2 <- fa(poly_cor,
 ```
 Compare the communalities
 ```{r }
-c1 <- sort(modelo1$communality, decreasing = T)
-c2 <- sort(modelo2$communality, decreasing = T)
+c1 <- sort(modelo1$communality, decreasing = TRUE)
+c2 <- sort(modelo2$communality, decreasing = TRUE)
 head(cbind(c1, c2))
 ```
 
@@ -521,8 +521,8 @@ head(cbind(c1, c2))
 Compare the unicities 
 
 ```{r }
-u1 <- sort(modelo1$uniquenesses, decreasing = T)
-u2 <- sort(modelo2$uniquenesses, decreasing = T)
+u1 <- sort(modelo1$uniquenesses, decreasing = TRUE)
+u2 <- sort(modelo2$uniquenesses, decreasing = TRUE)
 head(cbind(u1, u2))
 ```
 
