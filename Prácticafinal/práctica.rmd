@@ -567,7 +567,6 @@ for (k in seq_len(length(new_diab) - 1)) {
 }
 ```
 
-```
 ### Gráficos QQ-plot
 ```{r}
 # Representación de cuantiles normales de cada variable para cada especie
@@ -622,7 +621,7 @@ pairs(
 #### Homogeneity of variance
 ```{r}
 biotools::boxM(
-  data = new_diab,
+  data = new_diab[1:7],
   grouping = new_diab[, 8]
 )
 ```
