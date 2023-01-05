@@ -387,18 +387,20 @@ hist(as.numeric(unlist(new_diab[8])),
 # Multivariate exploratory analysis
 
 <!-- a) -->
-We will use the Bartlett test to check if the variables are homoscedastic. 
+We will first use the Bartlett test to check if the variables are homoscedastic. 
 
 ```{r}
 diab_no_output <- subset(new_diab, select = -class)
 cor(diab_no_output)
 library(psych)
 data_normalised <- scale(diab_no_output)
-cortest.bartlett(cor(data_normalised))
+cortest.bartlett(cor(data_normalised), n = nrow(data_normalised))
 ```
+
+We reject the null hypothesis of homoscedasticity: the variables have different variances. 
+
 <!-- b hecho? TODO -->
 <!-- c Done in the previous  -->
-
 
 <!-- d) -->
 ## PCA
@@ -410,18 +412,21 @@ PCA$rotation
 plot(cumsum(PCA$sdev^2) / (sum(PCA$sdev^2)), type = "l") # check this
 summary(PCA)
 ```
+
 ### Number of components
 We need the function `fviz_screeplot` from the `factoextra` package.
 
 ```{r, results = FALSE, message=FALSE, warning=FALSE}
 library(factoextra)
 ```
+There's a few methods to determine the number of components to keep. We will use the elbow method and the mean variance method.
 
 #### Elbow method
 ```{r}
 fviz_screeplot(PCA, addlabels = TRUE)
 ```
-Suggests 3 components
+
+Does't suggest any particular number of components.
 
 #### Mean variace method
 ```{r}
@@ -498,6 +503,8 @@ head(cbind(u1, u2))
 ```
 
 ### Determine the number of factors
+Again, we have a few methods to determine the number of factors to keep. We will use the scree plot and the parallel analysis.
+
 ```{r }
 scree(poly_cor)
 fa.parallel(poly_cor, n.obs = length(diab_no_output[, 1]), fa = "fa", fm = "minres")
@@ -558,7 +565,6 @@ for (k in seq_len(length(new_diab) - 1)) {
     qqline(x)
   }
 }
-par(mfrow = c(1, 1))
 ```
 
 In addition to this, we previously saw that the data was not normally distributed according to the Shapiro-Wilk test.
@@ -570,6 +576,7 @@ Due to the sensibility of the multivariate normality test to outliers, we check 
 ```{r}
 outliers <- MVN::mvn(data = diab_no_output, mvnTest = "hz", multivariateOutlierMethod = "quan")
 ```
+There is a large number of outliers, as is noticeable.
 
 And with them removed we use two tests to check for normality
 
@@ -701,7 +708,7 @@ for (k in seq_len(length(new_diab) - 1)) {
 }
 ```
 
-Notice that some variables have a very pronounced mode in exactly the mean. This is because the mean is being used to replace the NA's. This is not a good idea, as it will skew the data. Instead, we will resample the data, and replace the NA's with the resampled values.
+Notice that some variables have a very pronounced mode in exactly the mean, because the mean is being used to replace the NA's. This may affect the performance of the classifier, that relies on normality of variables. Instead, we will resample the data, and replace the NA's with the resampled values.
 
 ```{r}
 diabetes_resampled <-
@@ -737,7 +744,7 @@ And we test the normality of the data using the Shapiro-Wilk test:
 lapply(diabetes_resampled[1:7], shapiro.test)
 ```
 
-Still not normal at this point.
+Still very far from being normal distributions at this point.
 
 ```{r}
 par(mfrow = c(2, 4))
@@ -755,10 +762,9 @@ for (k in seq_len(length(diabetes_resampled) - 1)) {
     qqline(x)
   }
 }
-par(mfrow = c(1, 1))
 ```
 
-These distributions resemble the normal distribution more closely, so we can try to use the LDA and QDA models again.
+These distributions resemble the normal distribution more closely, so we can try to use the LDA and QDA models again, but the performance has not improved dramatically.
 
 ### Linear Discriminant
 ```{r}
@@ -775,7 +781,8 @@ qda_model
 
 ## Feature transformations
 
-We can make some transformations to the data. 
+We can make some transformations to the data in order to have it approach the normal further.
+
 ```{r}
 diabetes_transformed <- diabetes_resampled |>
   transform(
@@ -802,11 +809,11 @@ shapiro.test(diabetes_transformed$plas_log)
 shapiro.test(diabetes_transformed$pedi_log)
 ```
 
-We are finally succesful in transforming the data to a "more normal" distribution. Notice that the transformed variables have a much higher $p$-value in the shapiro test than they originally did.
+We are finally succesful in transforming the data to a "more normal" distribution, at least to some degree.
 
-In particular, let's compare the original and transformed data for the variables `plas` and `pedi`.
+Let's compare the original and transformed data for the variables `plas` and `pedi` in both terms of the QQ-plot and the histogram.
 
-For `plas`:
+The QQ-plot for `plas`:
 ```{r}
 par(mfrow = c(2, 2))
 for (i in 1:2) {
@@ -860,7 +867,6 @@ for (i in 1:2) {
   )
   qqline(x)
 }
-par(mfrow = c(1, 1))
 ```
 
 In both cases, the transformed data fits the normal slightly better.
@@ -902,7 +908,15 @@ qda_model <- pipeline_model(
 qda_model
 ```
 
-Unfortunately, these transformations do not seem to improve the models.
+Unfortunately, these transformations do not seem to improve the models significantly.
 
+### Thoughts on the classifier
+
+The non-normality may contribute to the low performance of our classifier in this case. Even when transformed, the data does not follow the normal distribution.
+The prior probabilities of belonging to `tested_negative` and `tested_positive` are  `0.6493` and `0.3506`, respectively, meaning the classes are imbalanced and `1 - 0.6493 = 0.3507` would be the expected error rate of the always positive classifier.
+
+Having that in mind, our estimated error rate 24.5% of our classifier is almost a 10% improvement over that naive classifier, but leaves significant room for improvement.
 
 ## Conclusion
+
+This dataset contains several variables that are not only not normally distributed, but have a high number of outliers because of it. Both of these factors may contribute to the low performance of our classifiers.
