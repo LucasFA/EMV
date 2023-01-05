@@ -795,6 +795,8 @@ diabetes_transformed$class <- NULL
 diabetes_transformed$class <- temp
 ```
 
+Notice the $p$ values of the transformed variables, which have increased dramatically in value.
+
 ```{r}
 shapiro.test(diabetes_transformed$plas_log)
 shapiro.test(diabetes_transformed$pedi_log)
@@ -880,6 +882,7 @@ for (k in 1:2) {
   col_hist(column, hist_title, column_name)
 }
 ```
+Again, clearly matches the normal distribution better.
 
 ### Linear Discriminant
 ```{r}
