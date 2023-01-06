@@ -938,7 +938,7 @@ Having that in mind, our estimated error rate 22% of our classifier is almost a 
 
 Our objective was to understand the relationship between the variables in the dataset and to build a classifier that can predict whether a patient has diabetes or not. 
 
-First, we found that the data is not normally distributed, and that the variables `plas` and `pedi`, in particular seem to be log-normal. We then transformed these two variables in order to approach the normal, and found that this transformation did not significantly  improve the performance of the classifier according to the cross-validation results.
+First, we found that the data is not normally distributed, and that the variables `plas` and `pedi`, seem to be log-normal. We then transformed these two variables in order to approach the normal, and found that this transformation did not significantly  improve the performance of the classifier according to the cross-validation results.
 
 
 We have built a classifier that can predict whether a patient has diabetes or not, with an estimated error rate of 22%. This is a 10% improvement over the naive classifier that always predicts `tested_positive`.
