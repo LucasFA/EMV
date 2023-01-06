@@ -925,14 +925,30 @@ qda_model
 ```
 
 Unfortunately, these transformations do not seem to improve the models significantly.
+In any case, cross-validation shows that both models have similar performance, with an out of sample error rate of approximately 22% for both. An interesting caveat is that the in-sample error rate is higher in both cases.
 
 ### Thoughts on the classifier
 
-The non-normality may contribute to the low performance of our classifier in this case. Even when transformed, the data does not follow the normal distribution.
-The prior probabilities of belonging to `tested_negative` and `tested_positive` are  `0.6493` and `0.3506`, respectively, meaning the classes are imbalanced and `1 - 0.6493 = 0.3507` would be the expected error rate of the trivial, always positive classifier.
+The non-normality may contribute to the low performance of our classifier. Even when transformed, the data does not follow the normal distribution.
+The prior probabilities of belonging to `tested_negative` and `tested_positive` are  `0.6493` and `0.3506`, respectively, meaning the classes are imbalanced and `1 - 0.6493 = 0.3507` would be the expected error rate of the naive, always positive classifier.
 
-Having that in mind, our estimated error rate 24.5% of our classifier is almost a 10% improvement over that naive classifier.
+Having that in mind, our estimated error rate 22% of our classifier is almost a 13% improvement over the mentioned trivial classifier.
 
-## Conclusion
+# Results and conclusions
 
-This dataset contains several variables that are not only not normally distributed, but have a high number of outliers because of it. Both of these factors may contribute to the low performance of our classifiers.
+Our objective was to understand the relationship between the variables in the dataset and to build a classifier that can predict whether a patient has diabetes or not. 
+
+First, we found that the data is not normally distributed, and that the variables `plas` and `pedi`, in particular seem to be log-normal. We then transformed these two variables in order to approach the normal, and found that this transformation did not significantly  improve the performance of the classifier according to the cross-validation results.
+
+
+We have built a classifier that can predict whether a patient has diabetes or not, with an estimated error rate of 22%. This is a 10% improvement over the naive classifier that always predicts `tested_positive`.
+
+# Possible improvements
+
+- We have not used the `preg` variable in out analysis, which is the number of times pregnant. This variable may or may not be useful in predicting whether a patient has diabetes or not, in which case it could be included in the model.
+
+- The cross-validation results may change significantly depending on the training - test split. This affects our confidence in our results. We could use a more robust method to estimate the error rate, such as k-fold cross-validation.
+
+- Regarding the classifier itself, other models could be used, such as logistic regression.
+
+- Other transformations could be applied to the data. In this case, domain knowledge may be useful.
