@@ -1,6 +1,6 @@
 ---
 title: "Práctica final"
-author: "Agnese, Lucas Fehlau Arbulu"
+author: "Agnese Missoni, Lucas Fehlau Arbulu"
 date: "`r Sys.Date()`"
 output:
   html_document: 
@@ -387,29 +387,38 @@ hist(as.numeric(unlist(new_diab[8])),
 # Multivariate exploratory analysis
 
 <!-- a) -->
-We will first use the Bartlett test to check if the variables are homoscedastic. 
+We will first use the Bartlett test to check whether the variables are correlated.
 
 ```{r}
 diab_no_output <- subset(new_diab, select = -class)
-cor(diab_no_output)
 library(psych)
 data_normalised <- scale(diab_no_output)
 cortest.bartlett(cor(data_normalised), n = nrow(data_normalised))
 ```
 
-We reject the null hypothesis of homoscedasticity: the variables have different variances. 
+We reject the null hypothesis of uncorrelatedness, so applying PCA is justified.
 
 <!-- b hecho? TODO -->
 <!-- c Done in the previous  -->
 
 <!-- d) -->
 ## PCA
+We will use the function `prcomp` from the `stats` package, which performs PCA.
 ```{r}
 PCA <- prcomp(diab_no_output, scale = TRUE, center = TRUE)
-
+```
+Then the coefficients are given by:
+```{r}
 PCA$rotation
-
-plot(cumsum(PCA$sdev^2) / (sum(PCA$sdev^2)), type = "l") # check this
+```
+We can visualize the proportion of variance explained by each component:
+```{r}
+plot(cumsum(PCA$sdev^2) / (sum(PCA$sdev^2)), type = "l",
+      col = "lightblue",
+      xlab = "Number of components", ylab = "Proportion of variance explained",
+      xlim = c(1, 7), ylim = c(0, 1)
+)
+lines(PCA$sdev^2 / (sum(PCA$sdev^2)), type = "l", col = "red")
 summary(PCA)
 ```
 
@@ -419,6 +428,7 @@ We need the function `fviz_screeplot` from the `factoextra` package.
 ```{r, results = FALSE, message=FALSE, warning=FALSE}
 library(factoextra)
 ```
+
 There's a few methods to determine the number of components to keep. We will use the elbow method and the mean variance method.
 
 #### Elbow method
@@ -433,14 +443,14 @@ Does't suggest any particular number of components.
 PCA$sdev
 mean(PCA$sdev^2)
 ```
-Also suggests 3 components.
+Suggests 3 using components.
 
-<!-- TODO: where does this go? It doesn't seem to appear in the guide -->
+
 ### Visualization of components
 ```{r}
 fviz_pca_var(PCA,
   repel = TRUE, col.var = "cos2",
-  legend.title = "Distancia"
+  legend.title = "Distance"
 ) + theme_bw()
 ```
 
@@ -448,16 +458,14 @@ fviz_pca_var(PCA,
 fviz_pca_var(PCA,
   axes = c(1, 3),
   repel = TRUE, col.var = "cos2",
-  legend.title = "Distancia"
+  legend.title = "Distance"
 ) + theme_bw()
 ```
-
-<!-- TODO?: interpretation -->
 
 <!-- e) -->
 ## Factor analysis
 ### Preconditions
-We saw in our previous analysis of correlations for PCA that the data 
+We saw in our previous analysis of correlations for PCA that the data was not uncorrelated according to the Bartlett test. We will now check for the factor analysis. We can visualize the correlation matrix:
 
 ```{r}
 poly_cor <- polycor::hetcor(diab_no_output)$correlations
@@ -468,7 +476,9 @@ ggcorrplot::ggcorrplot(poly_cor, type = "lower", hc.order = T)
 corrplot::corrplot(cor(diab_no_output), order = "hclust", tl.col = "black", tl.cex = 1)
 ```
 
-### Factor 
+Groupings are not very clear. Though there's a strong correlation between _skin_ and _mass_, and between _plas_ and _insu_.
+
+### Models
 
 MLE model:
 ```{r}
@@ -486,31 +496,32 @@ model2 <- fa(poly_cor,
   fm = "minres"
 )
 ```
-Compare the communalities
+
+We can compare the communalities:
 ```{r }
 c1 <- sort(model1$communality, decreasing = TRUE)
 c2 <- sort(model2$communality, decreasing = TRUE)
 head(cbind(c1, c2))
 ```
 
-<!-- TODO: check the name of this -->
-Compare the unicities 
-
+And the uniquenesses:
 ```{r }
 u1 <- sort(model1$uniquenesses, decreasing = TRUE)
 u2 <- sort(model2$uniquenesses, decreasing = TRUE)
 head(cbind(u1, u2))
 ```
 
+Notice that the communalities go beyond 1 in the minimum residual model. This is an ultra-Heywood case, which means that it is not reliable. We will therefore continue with the MLE model.
+
 ### Determine the number of factors
 Again, we have a few methods to determine the number of factors to keep. We will use the scree plot and the parallel analysis.
 
 ```{r }
 scree(poly_cor)
-fa.parallel(poly_cor, n.obs = length(diab_no_output[, 1]), fa = "fa", fm = "minres")
+fa.parallel(poly_cor, n.obs = length(diab_no_output[, 1]), fa = "fa", fm = "mle")
 ```
 
-Both plots suggest using 3 factors.
+In both cases, using three factors is suggested.
 
 ### Model
 ```{r }
@@ -569,16 +580,14 @@ for (k in seq_len(length(new_diab) - 1)) {
 
 In addition to this, we previously saw that the data was not normally distributed according to the Shapiro-Wilk test.
 
-
 #### Multivariate
 
 Due to the sensibility of the multivariate normality test to outliers, we check again: 
 ```{r}
 outliers <- MVN::mvn(data = diab_no_output, mvnTest = "hz", multivariateOutlierMethod = "quan")
 ```
-There is a large number of outliers, as is noticeable.
 
-And with them removed we use two tests to check for normality
+There is a large number of outliers, as is noticeable.
 
 ```{r}
 royston_test <- MVN::mvn(data = diab_no_output, mvnTest = "royston", multivariatePlot = "qq")
@@ -588,6 +597,9 @@ royston_test$multivariateNormality
 hz_test <- MVN::mvn(data = diab_no_output, mvnTest = "hz")
 hz_test$multivariateNormality
 ```
+
+Summing up, the data is not multivariate normal with significant deviation from it.
+
 <!-- g -->
 ## Classifier
 
@@ -602,7 +614,8 @@ pairs(
 
 #### Homogeneity of variance
 
-The data already did not follow a normal distribution, so this test is somewhat superfluos, but we check and it also isn't homogeneous in variance. 
+In the Bartlett test we saw that the data is not spherically distributed, but it is also the case that the variances are not homogeneous as can be determined form the boxM test:
+
 ```{r}
 biotools::boxM(
   data = new_diab[1:7],
@@ -610,9 +623,13 @@ biotools::boxM(
 )
 ```
 
+
 #### Pipeline
+
+In order to simplify model-building, we create a pipeline function that takes the data, the model name, and the formula as input. The function then splits the data into training and test data, and fits the model. The function returns the model and writes out the results of cross-validation.
+
 ```{r}
-pipeline_model <- function(data, model_name, formula = class ~ plas + pres + skin + insu + mass + pedi + age) {
+pipeline_model <- function(data, model_name, formula = class ~ .) {
   set.seed(42)
   training_rows <- sample(
     nrow(data),
@@ -649,7 +666,7 @@ pipeline_model <- function(data, model_name, formula = class ~ plas + pres + ski
 }
 ```
 
-### Linear Discriminant and cross-validation
+### Linear Discriminant
 
 ```{r}
 lda_model <- pipeline_model(new_diab, "lda")
@@ -658,7 +675,7 @@ lda_model
 
 Due to the high number of dimensions and the high error rate in classification, visualizing the data is not very insightful in this case.
 
-### Quadratic Discriminant and cross-validation
+### Quadratic Discriminant
 
 ```{r}
 qda_model <- pipeline_model(new_diab, "qda")
@@ -667,8 +684,7 @@ qda_model
 
 ### Conclusion
 
-Despite the fact that the data is not normally distributed, both the LDA and QDA models show a possible discriminant, albeit with a high error rate. 
-
+Despite the fact that the data is not normally distributed, both the LDA and QDA models show a possible discriminant, though it does have a high error rate.
 
 # Feature engineering
 
@@ -913,9 +929,9 @@ Unfortunately, these transformations do not seem to improve the models significa
 ### Thoughts on the classifier
 
 The non-normality may contribute to the low performance of our classifier in this case. Even when transformed, the data does not follow the normal distribution.
-The prior probabilities of belonging to `tested_negative` and `tested_positive` are  `0.6493` and `0.3506`, respectively, meaning the classes are imbalanced and `1 - 0.6493 = 0.3507` would be the expected error rate of the always positive classifier.
+The prior probabilities of belonging to `tested_negative` and `tested_positive` are  `0.6493` and `0.3506`, respectively, meaning the classes are imbalanced and `1 - 0.6493 = 0.3507` would be the expected error rate of the trivial, always positive classifier.
 
-Having that in mind, our estimated error rate 24.5% of our classifier is almost a 10% improvement over that naive classifier, but leaves significant room for improvement.
+Having that in mind, our estimated error rate 24.5% of our classifier is almost a 10% improvement over that naive classifier.
 
 ## Conclusion
 
