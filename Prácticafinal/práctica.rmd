@@ -930,7 +930,7 @@ In any case, cross-validation shows that both models have similar performance, w
 ### Thoughts on the classifier
 
 The non-normality may contribute to the low performance of our classifier. Even when transformed, the data does not follow the normal distribution.
-The prior probabilities of belonging to `tested_negative` and `tested_positive` are  `0.6493` and `0.3506`, respectively, meaning the classes are imbalanced and `1 - 0.6493 = 0.3507` would be the expected error rate of the naive, always positive classifier.
+The prior probabilities of belonging to `tested_negative` and `tested_positive` are  $0.6493$ and $0.3506$, respectively. Therefore the rate of positives, $0.3506$, would be the expected error rate of the naive classifier that always returns `tested_negative`.
 
 Having that in mind, our estimated error rate 22% of our classifier is almost a 13% improvement over the mentioned trivial classifier.
 
