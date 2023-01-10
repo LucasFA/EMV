@@ -935,7 +935,7 @@ qda_model
 ```
 
 Unfortunately, these transformations do not seem to improve the models significantly.
-In any case, cross-validation shows that both models have similar performance, with an out of sample error rate of approximately 22% for both. An interesting caveat is that the in-sample error rate is higher in both cases.
+In any case, cross-validation shows that both models have similar performance, with an out of sample error rate of approximately $22%$ for both. An interesting caveat is that the in-sample error rate is higher in both cases.
 
 ### Thoughts on the classifier
 
