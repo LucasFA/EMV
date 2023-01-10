@@ -396,7 +396,7 @@ data_normalised <- scale(diab_no_output)
 cortest.bartlett(cor(data_normalised), n = nrow(data_normalised))
 ```
 
-We reject the null hypothesis of uncorrelatedness, so applying PCA is justified.
+We reject the null hypothesis of uncorrelatedness between the variables, so applying PCA is justified.
 
 <!-- b hecho? TODO -->
 <!-- c Done in the previous  -->
@@ -419,6 +419,11 @@ plot(cumsum(PCA$sdev^2) / (sum(PCA$sdev^2)), type = "l",
       xlim = c(1, 7), ylim = c(0, 1)
 )
 lines(PCA$sdev^2 / (sum(PCA$sdev^2)), type = "l", col = "red")
+```
+The red line is the proportion of variance explained by each component, while the blue line represents the cumulative proportion of variance explained by the first $i$ components.
+
+As a table, this is given by:
+```{r}
 summary(PCA)
 ```
 
@@ -447,6 +452,8 @@ Suggests 3 using components.
 
 
 ### Visualization of components
+Notice that the first variable has a negative coefficient with all variables (which can be seen in the `PCA$rotation` table above), which leads to both plots to stay in the left side of the graph.
+
 ```{r}
 fviz_pca_var(PCA,
   repel = TRUE, col.var = "cos2",
@@ -465,7 +472,9 @@ fviz_pca_var(PCA,
 <!-- e) -->
 ## Factor analysis
 ### Preconditions
-We saw in our previous analysis of correlations for PCA that the data was not uncorrelated according to the Bartlett test. We will now check for the factor analysis. We can visualize the correlation matrix:
+We saw in our previous analysis of correlations for PCA that the data was not uncorrelated according to the Bartlett test. 
+
+We can visualize the correlation matrix two ways:
 
 ```{r}
 poly_cor <- polycor::hetcor(diab_no_output)$correlations
@@ -476,7 +485,7 @@ ggcorrplot::ggcorrplot(poly_cor, type = "lower", hc.order = T)
 corrplot::corrplot(cor(diab_no_output), order = "hclust", tl.col = "black", tl.cex = 1)
 ```
 
-Groupings are not very clear. Though there's a strong correlation between _skin_ and _mass_, and between _plas_ and _insu_.
+In either of these, groupings are not very clear. Though there's a strong correlation between _skin_ and _mass_, and between _plas_ and _insu_.
 
 ### Models
 
@@ -497,24 +506,24 @@ model2 <- fa(poly_cor,
 )
 ```
 
-We can compare the communalities:
+We can compare the communalities, that is, the amount of variance accounted by factors in the model:
 ```{r }
 c1 <- sort(model1$communality, decreasing = TRUE)
 c2 <- sort(model2$communality, decreasing = TRUE)
-head(cbind(c1, c2))
+cbind(c1, c2)
 ```
 
-And the uniquenesses:
+And the uniquenesses, the variance not accounted for by the factors:
 ```{r }
 u1 <- sort(model1$uniquenesses, decreasing = TRUE)
 u2 <- sort(model2$uniquenesses, decreasing = TRUE)
-head(cbind(u1, u2))
+cbind(u1, u2)
 ```
 
-Notice that the communalities go beyond 1 in the minimum residual model. This is an ultra-Heywood case, which means that it is not reliable. We will therefore continue with the MLE model.
+Notice that the communalities go beyond 1 in the minimum residual model. This is an ultra-Heywood case, which means that it is not a reliable model. We will therefore continue with the MLE model.
 
 ### Determine the number of factors
-Again, we have a few methods to determine the number of factors to keep. We will use the scree plot and the parallel analysis.
+We have a few methods to determine the number of factors we should use. We will use the scree plot and parallel analysis.
 
 ```{r }
 scree(poly_cor)
@@ -523,24 +532,19 @@ fa.parallel(poly_cor, n.obs = length(diab_no_output[, 1]), fa = "fa", fm = "mle"
 
 In both cases, using three factors is suggested.
 
-### Model
+### Model interpretation
+We can visualize the model by presenting how each latent factor affects each obsevable variable:
 ```{r }
-varimax_model <- fa(poly_cor,
-  nfactors = 3, rotate = "varimax",
-  fa = "mle"
-)
-
-print(varimax_model$loadings, cut = 0)
-fa.diagram(varimax_model)
-stats::factanal(diab_no_output, factors = 3, rotation = "none")
+fa.diagram(model1)
 ```
 
 ### Note
-Notice that we received a warning about this being an Ultra-Heywood case. According to the literature, this means the model is not reliable, and there could be several reasons for this.
+Notice that we received a warning about this being an Ultra-Heywood case. According to the literature, this means the model is not reliable.
 
 <!-- f -->
 ## Multivariate normality testing
 
+We previously saw the data did not fit a normal distribution:
 ### Marginal distributions
 ```{r}
 par(mfrow = c(2, 4))
@@ -578,27 +582,30 @@ for (k in seq_len(length(new_diab) - 1)) {
 }
 ```
 
-In addition to this, we previously saw that the data was not normally distributed according to the Shapiro-Wilk test.
+In addition to this, we showed that the data was not normally distributed according to the Shapiro-Wilk test.
 
 #### Multivariate
 
-Due to the sensibility of the multivariate normality test to outliers, we check again: 
+We first check for multivariate outliers:
 ```{r}
 outliers <- MVN::mvn(data = diab_no_output, mvnTest = "hz", multivariateOutlierMethod = "quan")
 ```
 
-There is a large number of outliers, as is noticeable.
+There is a large number of outliers. According to the Royston test, the data is not multivariate normal:
 
 ```{r}
 royston_test <- MVN::mvn(data = diab_no_output, mvnTest = "royston", multivariatePlot = "qq")
 
 royston_test$multivariateNormality
+```
 
+Likewise with the Henze-Zirkler test:
+```{r}
 hz_test <- MVN::mvn(data = diab_no_output, mvnTest = "hz")
 hz_test$multivariateNormality
 ```
 
-Summing up, the data is not multivariate normal with significant deviation from it.
+Summing up, the data is not multivariate normal, with significant deviation from it.
 
 <!-- g -->
 ## Classifier
@@ -760,7 +767,9 @@ And we test the normality of the data using the Shapiro-Wilk test:
 lapply(diabetes_resampled[1:7], shapiro.test)
 ```
 
-Still very far from being normal distributions at this point.
+Still very far from being normal distributions.
+
+The QQ-plots show some variables have very high deviations from the normal specially in the extremes, for example, `pedi`.
 
 ```{r}
 par(mfrow = c(2, 4))
@@ -818,14 +827,14 @@ diabetes_transformed$class <- NULL
 diabetes_transformed$class <- temp
 ```
 
-Notice the $p$ values of the transformed variables, which have increased dramatically in value.
+Notice the $p$ values of the transformed variables, which have increased dramatically in value:
 
 ```{r}
 shapiro.test(diabetes_transformed$plas_log)
 shapiro.test(diabetes_transformed$pedi_log)
 ```
 
-We are finally succesful in transforming the data to a "more normal" distribution, at least to some degree.
+We are finally succesful in transforming the data to a "more normal" distribution, to some degree.
 
 Let's compare the original and transformed data for the variables `plas` and `pedi` in both terms of the QQ-plot and the histogram.
 
@@ -904,6 +913,7 @@ for (k in 1:2) {
   col_hist(column, hist_title, column_name)
 }
 ```
+
 Again, clearly matches the normal distribution better.
 
 ### Linear Discriminant
@@ -932,7 +942,7 @@ In any case, cross-validation shows that both models have similar performance, w
 The non-normality may contribute to the low performance of our classifier. Even when transformed, the data does not follow the normal distribution.
 The prior probabilities of belonging to `tested_negative` and `tested_positive` are  $0.6493$ and $0.3506$, respectively. Therefore the rate of positives, $0.3506$, would be the expected error rate of the naive classifier that always returns `tested_negative`.
 
-Having that in mind, our estimated error rate 22% of our classifier is almost a 13% improvement over the mentioned trivial classifier.
+Having that in mind, our estimated error rate $22%$ of our classifier is almost a $13%$ improvement over the mentioned trivial classifier.
 
 # Results and conclusions
 
@@ -941,7 +951,7 @@ Our objective was to understand the relationship between the variables in the da
 First, we found that the data is not normally distributed, and that the variables `plas` and `pedi`, seem to be log-normal. We then transformed these two variables in order to approach the normal, and found that this transformation did not significantly  improve the performance of the classifier according to the cross-validation results.
 
 
-We have built a classifier that can predict whether a patient has diabetes or not, with an estimated error rate of 22%. This is a 10% improvement over the naive classifier that always predicts `tested_positive`.
+We have built a classifier that can predict whether a patient has diabetes or not, with an estimated error rate of $22%$. This is a $10%$ improvement over the naive classifier that always predicts `tested_positive`.
 
 # Possible improvements
 
