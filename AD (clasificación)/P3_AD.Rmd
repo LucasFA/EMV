@@ -134,7 +134,8 @@ library(knitr)
 library(dplyr)
 datos_tidy <- melt(datos, value.name = "valor")
 aggregate(
-  formula = valor ~ especie + variable, data = datos_tidy,
+  valor ~ especie + variable,
+  data = datos_tidy,
   FUN = function(x) {
     shapiro.test(x)$p.value
   }
