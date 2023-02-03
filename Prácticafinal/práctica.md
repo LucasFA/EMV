@@ -1,18 +1,6 @@
 ---
-title: "Práctica final"
-author: "Agnese Missoni, Lucas Fehlau Arbulu"
-date: "2023-02-03"
-output:
-  html_document: 
-    toc: true
-    toc_depth: 2
-    number_sections: false
-    keep_md: true
-    toc_float: 
-      collapsed: false
-      smooth_scroll: false
-  pdf_document:
-    keep_tex: true
+toc: true
+toc_sticky: true
 ---
 # Abstract
 Diabetes, in Latin diabetes mellitus, is, worldwide, one of the largest public health problem and it seems to increase year after year. This is also why the National Institute of Diabetes and Digestive and Kidney Diseases every 2 years since 1965 analyses the evolution of diabetes in the Pima Indian population. In this paper we start with an univariate exploratory analysis and conclude with a multivariate analysis of the data, since the main goal is to understand which factors are the most relevant to rise the risks of diabetes.
