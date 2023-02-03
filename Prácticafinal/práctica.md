@@ -1,7 +1,3 @@
----
-toc: true
-toc_sticky: true
----
 # Abstract
 Diabetes, in Latin diabetes mellitus, is, worldwide, one of the largest public health problem and it seems to increase year after year. This is also why the National Institute of Diabetes and Digestive and Kidney Diseases every 2 years since 1965 analyses the evolution of diabetes in the Pima Indian population. In this paper we start with an univariate exploratory analysis and conclude with a multivariate analysis of the data, since the main goal is to understand which factors are the most relevant to rise the risks of diabetes.
 
